@@ -15,7 +15,8 @@
         "ASPNETCORE_HTTP_PORTS": "8080",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "publishAllPorts": true,
+      "publishAllPorts": false,
+      "httpPort": 8080,
       "useSSL": false
     },
     "IIS Express": {
