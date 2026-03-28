@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="LearnWellUniversity_CMS.API/LearnWellUniversity_CMS.API.csproj" />
+    <Project Path="LearnWellUniversity_CMS.Application/LearnWellUniversity_CMS.Application.csproj" Id="ff60c852-9a67-4191-b5ee-5f3ba56d5b5a" />
+    <Project Path="LearnWellUniversity_CMS.Domain/LearnWellUniversity_CMS.Domain.csproj" Id="567ad941-803d-444e-882c-852e60c1ac1c" />
+    <Project Path="LearnWellUniversity_CMS.Infrastructure/LearnWellUniversity_CMS.Infrastructure.csproj" Id="417d8938-7f80-43b8-8b14-37cd75cc69aa" />
+    <Project Path="LearnWellUniversity_CMS.Shared/LearnWellUniversity_CMS.Shared.csproj" Id="c5f95b4a-349d-43e9-9212-e98636529a4d" />
+  </Folder>
+</Solution>
