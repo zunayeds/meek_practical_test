@@ -27,6 +27,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.ConfigureAuthentication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwaggerDocWithUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

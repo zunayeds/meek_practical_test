@@ -10,6 +10,7 @@ A Course Management System for Learn Well University, comprising a .NET 9 Web AP
 - **Entity Framework Core 9**
 - **Swagger (Open API)**
 - **PostgreSQL (latest)**
+- **JWT (Bearer Authentication)**
 
 ## Prerequisites
 
@@ -46,6 +47,12 @@ The API will automatically apply EF migrations and seed a default admin account 
 - Open **Postman** and click **Import** button.
 - Paste <http://localhost:8080/swagger/v1/swagger.json> into the **Import** dialog.
 - Click **Import** button to import the collection.
+
+## Default Credentials
+
+| Service | Login | Password  |
+|---------|-------|-----------|
+| API (Staff) | admin@learnwell.edu | Admin@123 |
 
 ## ER Diagram
 

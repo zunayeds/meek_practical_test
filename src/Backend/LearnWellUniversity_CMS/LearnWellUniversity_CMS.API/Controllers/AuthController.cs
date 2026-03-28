@@ -8,7 +8,7 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 [ApiController]
 public class AuthController(IAuthService authService) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticationRequest request)
     {
         var result = await authService.AuthenticateAsync(request);
