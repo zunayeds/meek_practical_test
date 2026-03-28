@@ -57,11 +57,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(s => s.UserId);
+            entity.HasIndex(s => s.UserId).IsUnique();
             entity.HasOne(s => s.User)
                     .WithOne()
-                    .HasForeignKey<ApplicationUser>(s => s.Id)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .HasForeignKey<Student>(s => s.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(u => u.CreatedByUser)
                     .WithMany()
                     .HasForeignKey(u => u.CreatedBy)

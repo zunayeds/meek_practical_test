@@ -12,8 +12,6 @@ public class ApplicationUser : IdentityUser<Guid>, IAuditTrailBase
     [StringLength(50)]
     public required string LastName { get; set; }
 
-    public bool MustChangePassword { get; set; }
-
     // Audit Trail Properties
     public DateTimeOffset CreatedAt { get; set; }
     public ApplicationUser CreatedByUser { get; set; } = null!;

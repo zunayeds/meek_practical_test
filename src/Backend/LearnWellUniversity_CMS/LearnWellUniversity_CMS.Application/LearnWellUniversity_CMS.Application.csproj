@@ -7,4 +7,8 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LearnWellUniversity_CMS.Domain\LearnWellUniversity_CMS.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

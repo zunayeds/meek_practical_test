@@ -12,12 +12,14 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.14" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LearnWellUniversity_CMS.Application\LearnWellUniversity_CMS.Application.csproj" />
+    <ProjectReference Include="..\LearnWellUniversity_CMS.Infrastructure\LearnWellUniversity_CMS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
