@@ -1,37 +1,34 @@
-﻿using LearnWellUniversity_CMS.Domain.Models;
+﻿using LearnWellUniversity_CMS.Application.Services;
+using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Shared.Constants;
-using Microsoft.AspNetCore.Identity;
 
 namespace LearnWellUniversity_CMS.Infrastructure.DataAccess;
 
 public class DataSeeder
 {
-    public static async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    public static async Task SeedAsync(IUserService userService, IRoleService roleService)
     {
         foreach (var role in new[] { Roles.Staff, Roles.Student })
         {
-            if (!await roleManager.RoleExistsAsync(role))
-                await roleManager.CreateAsync(new IdentityRole<Guid>(role));
+            await roleService.CreateRoleAsync(role);
         }
 
         const string adminEmail = "admin@learnwell.edu";
-        if (await userManager.FindByEmailAsync(adminEmail) is null)
+        const string adminPassword = "Admin@123";
+
+        var id = Guid.NewGuid();
+        var admin = new ApplicationUser
         {
-            var id = Guid.NewGuid();
-            var admin = new ApplicationUser
-            {
-                Id = id,
-                FirstName = "Super",
-                LastName = "Admin",
-                Email = adminEmail,
-                UserName = adminEmail,
-                EmailConfirmed = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                CreatedBy = id
-            };
-            var result = await userManager.CreateAsync(admin, "Admin@123");
-            if (result.Succeeded)
-                await userManager.AddToRoleAsync(admin, Roles.Staff);
-        }
+            Id = id,
+            FirstName = "Super",
+            LastName = "Admin",
+            Email = adminEmail,
+            UserName = adminEmail,
+            EmailConfirmed = true,
+            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedBy = id
+        };
+
+        await userService.CreateWithRoleAsync(admin, Roles.Staff, adminPassword);
     }
 }

@@ -1,6 +1,5 @@
-﻿using LearnWellUniversity_CMS.Domain.Models;
+﻿using LearnWellUniversity_CMS.Application.Services;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
-using Microsoft.AspNetCore.Identity;
 
 namespace LearnWellUniversity_CMS.API.Extensions.Infrastructure
 {
@@ -13,9 +12,9 @@ namespace LearnWellUniversity_CMS.API.Extensions.Infrastructure
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 db.Database.EnsureCreated();
 
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                await DataSeeder.SeedAsync(userManager, roleManager);
+                var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+                var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
+                await DataSeeder.SeedAsync(userService, roleService);
             }
         }
     }

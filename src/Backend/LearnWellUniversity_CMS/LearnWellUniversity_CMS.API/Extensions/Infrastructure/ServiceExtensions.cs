@@ -13,8 +13,11 @@ public static class ServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IClassService, ClassService>();
         services.AddScoped<ICourseService, CourseService>();
+        services.AddScoped<IStudentService, StudentService>();
 
         return services;
     }

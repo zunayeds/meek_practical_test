@@ -1,11 +1,14 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
 using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
 public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser) : IUnitOfWork
 {
+    private IDbContextTransaction? _transaction;
+
     public IClassRepository Classes => new ClassRepository(dbContext, currentUser);
     public ICourseRepository Courses => new CourseRepository(dbContext, currentUser);
     public IStudentRepository Students => new StudentRepository(dbContext, currentUser);
@@ -13,7 +16,43 @@ public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser) : IUni
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         dbContext.SaveChangesAsync(cancellationToken);
 
-    public void Dispose() => dbContext.Dispose();
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        _transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+    }
 
-    public async ValueTask DisposeAsync() => await dbContext.DisposeAsync();
+    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        if (_transaction is not null)
+        {
+            await _transaction.CommitAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+    }
+
+    public async Task RollbackAsync(CancellationToken cancellationToken = default)
+    {
+        if (_transaction is not null)
+        {
+            await _transaction.RollbackAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        _transaction?.Dispose();
+        dbContext.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_transaction is not null)
+        {
+            await _transaction.DisposeAsync();
+        }
+        await dbContext.DisposeAsync();
+    }
 }

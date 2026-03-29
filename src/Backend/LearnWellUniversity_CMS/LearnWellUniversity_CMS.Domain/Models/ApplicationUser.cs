@@ -19,5 +19,4 @@ public class ApplicationUser : IdentityUser<Guid>, IAuditTrailBase
     public DateTimeOffset? ModifiedAt { get; set; }
     public Guid? ModifiedBy { get; set; }
     public ApplicationUser? ModifiedByUser { get; set; }
-    public bool IsActive { get; set; }
 }
