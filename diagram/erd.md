@@ -12,7 +12,6 @@ AspNetUsers {
     uuid    CreatedBy           FK
     timestamptz ModifiedAt
     uuid    ModifiedBy          FK
-    boolean IsActive
 }
 
 Students {
@@ -55,6 +54,7 @@ Classes {
 
 
 CourseClasses {
+    uuid        CourseClassId   PK
     uuid        CourseId        FK
     uuid        ClassId         FK
     timestamptz AssignedAt
@@ -62,6 +62,7 @@ CourseClasses {
 }
 
 StudentCourses {
+    uuid        StudentCourseId PK
     uuid        StudentId       FK
     uuid        CourseId        FK
     timestamptz AssignedAt
@@ -69,6 +70,7 @@ StudentCourses {
 }
 
 StudentClasses {
+    uuid        StudentClassId  PK
     uuid        StudentId       FK
     uuid        ClassId         FK
     timestamptz AssignedAt

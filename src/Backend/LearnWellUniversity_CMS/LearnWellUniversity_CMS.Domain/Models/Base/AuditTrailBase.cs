@@ -8,7 +8,6 @@ public interface IAuditTrailBase
     public DateTimeOffset? ModifiedAt { get; set; }
     public Guid? ModifiedBy { get; set; }
     public ApplicationUser? ModifiedByUser { get; set; }
-    public bool IsActive { get; set; }
 }
 
 public abstract class AuditTrailBase : IAuditTrailBase
@@ -19,5 +18,4 @@ public abstract class AuditTrailBase : IAuditTrailBase
     public DateTimeOffset? ModifiedAt { get; set; }
     public Guid? ModifiedBy { get; set; }
     public ApplicationUser? ModifiedByUser { get; set; }
-    public bool IsActive { get; set; }
 }

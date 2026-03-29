@@ -20,7 +20,7 @@ public class AuthService(UserManager<ApplicationUser> userManager, IConfiguratio
     public async Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request)
     {
         var user = await userManager.FindByNameAsync(request.UserName);
-        if (user is null || !user.IsActive || !await userManager.CheckPasswordAsync(user, request.Password))
+        if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
             return null;
 
         var roles = await userManager.GetRolesAsync(user);
