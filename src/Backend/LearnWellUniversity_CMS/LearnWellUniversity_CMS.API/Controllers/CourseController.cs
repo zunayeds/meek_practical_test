@@ -21,9 +21,9 @@ public class CourseController(ICourseService courseService) : ControllerBase
 
     [HttpGet]
     [Authorize(Policy = Policies.StaffOrStudent)]
-    public async Task<IActionResult> GetAll([FromQuery] GetByFiltersBaseRequest request)
+    public async Task<IActionResult> GetAll([FromQuery] GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
     {
-        var courses = await courseService.GetCoursesAsync(request);
+        var courses = await courseService.GetCoursesAsync(request, cancellationToken);
         return Ok(courses);
     }
 
@@ -31,23 +31,23 @@ public class CourseController(ICourseService courseService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var course = await courseService.GetByCourseByIdAsync(id, cancellationToken);
+        var course = await courseService.GetByCourseIdAsync(id, cancellationToken);
         return Ok(course);
     }
 
     [HttpPut("{id:guid}")]
     [Authorize(Policy = Policies.StaffOnly)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateCourseRequest request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
     {
-        var course = await courseService.UpdateCourseAsync(id, request);
+        var course = await courseService.UpdateCourseAsync(id, request, cancellationToken);
         return Ok(course);
     }
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = Policies.StaffOnly)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
     {
-        await courseService.DeleteCourseByIdAsync(id);
+        await courseService.DeleteCourseByIdAsync(id, cancellationToken);
         return NoContent();
     }
 }

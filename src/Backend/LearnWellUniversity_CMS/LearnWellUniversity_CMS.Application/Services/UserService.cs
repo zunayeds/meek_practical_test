@@ -1,4 +1,5 @@
 ﻿using LearnWellUniversity_CMS.Domain.Models;
+using LearnWellUniversity_CMS.Shared.Exceptions;
 using LearnWellUniversity_CMS.Shared.Utilities;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,7 +18,7 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
 
         if (existingUser is not null)
         {
-            if (throwErrorIfExists) throw new Exception($"The email '{user.Email}' is already been used for an user");
+            if (throwErrorIfExists) throw new AlreadyExistException($"The email '{user.Email}' is already been used for an user");
             return (existingUser.Id, password ?? string.Empty);
         }
         else

@@ -12,5 +12,19 @@ public class MappingProfile : Profile
         CreateMap<Course, CourseResponseBase>();
         CreateMap<Course, CourseResponse>();
         CreateMap<CreateUpdateCourseRequest, Course>();
+        CreateMap<Course, CreatedEntityResponse>()
+            .ForMember(dest => dest.Id, src => src.MapFrom(s => s.CourseId));
+
+        CreateMap<Class, ClassResponseBase>();
+        CreateMap<Class, ClassResponse>();
+        CreateMap<CreateUpdateClassRequest, Class>();
+        CreateMap<Class, CreatedEntityResponse>()
+            .ForMember(dest => dest.Id, src => src.MapFrom(s => s.ClassId));
+
+        CreateMap<Student, StudentResponseBase>();
+        CreateMap<Student, StudentResponse>();
+        CreateMap<CreateUpdateStudentRequest, Student>();
+        CreateMap<Student, CreateStudentResponse>()
+            .ForMember(dest => dest.Id, src => src.MapFrom(s => s.StudentId));
     }
 }

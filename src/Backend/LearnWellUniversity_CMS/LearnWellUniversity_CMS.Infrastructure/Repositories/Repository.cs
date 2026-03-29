@@ -78,4 +78,9 @@ public class Repository<T>(AppDbContext dbContext, ICurrentUser currentUser, IMa
     {
         await _dbSet.Where(filter).ExecuteDeleteAsync(cancellationToken);
     }
+
+    public async Task<bool> DoesExistAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(filter, cancellationToken);
+    }
 }

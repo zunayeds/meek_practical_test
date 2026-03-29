@@ -33,6 +33,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder.Entity<Course>(entity =>
         {
+            entity.HasIndex(s => s.Name).IsUnique();
             entity.HasOne(u => u.CreatedByUser)
                     .WithMany()
                     .HasForeignKey(u => u.CreatedBy)
@@ -45,6 +46,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder.Entity<Class>(entity =>
         {
+            entity.HasIndex(s => s.Name).IsUnique();
             entity.HasOne(u => u.CreatedByUser)
                     .WithMany()
                     .HasForeignKey(u => u.CreatedBy)
@@ -58,6 +60,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         modelBuilder.Entity<Student>(entity =>
         {
             entity.HasIndex(s => s.UserId).IsUnique();
+            entity.HasIndex(s => s.EmailAddress).IsUnique();
+            entity.HasIndex(s => s.PhoneNumber).IsUnique();
             entity.HasOne(s => s.User)
                     .WithOne()
                     .HasForeignKey<Student>(s => s.UserId)

@@ -2,7 +2,7 @@
 
 namespace LearnWellUniversity_CMS.Application.DTOs.Requests;
 
-public class CreateStudentRequest
+public class CreateUpdateStudentRequest
 {
     [StringLength(50)]
     public required string FirstName { get; set; }

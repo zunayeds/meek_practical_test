@@ -2,15 +2,16 @@
 using LearnWellUniversity_CMS.Application.DTOs.Requests;
 using LearnWellUniversity_CMS.Application.DTOs.Responses;
 using LearnWellUniversity_CMS.Domain.Models;
+using LearnWellUniversity_CMS.Shared.Exceptions;
+using LearnWellUniversity_CMS.Shared.Utilities;
 using LinqKit;
-using System.Data.Entity.Core;
 
 namespace LearnWellUniversity_CMS.Application.Services;
 
 public interface ICourseService
 {
-    Task<EntityCreatedResponse> CreateAsync(CreateUpdateCourseRequest request, CancellationToken cancellationToken = default);
-    Task<CourseResponse> GetByCourseByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<CreatedEntityResponse> CreateAsync(CreateUpdateCourseRequest request, CancellationToken cancellationToken = default);
+    Task<CourseResponse> GetByCourseIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<CourseResponseBase>> GetCoursesAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
     Task<CourseResponse> UpdateCourseAsync(Guid id, CreateUpdateCourseRequest request, CancellationToken cancellationToken = default);
     Task DeleteCourseByIdAsync(Guid id, CancellationToken cancellationToken = default);
@@ -18,8 +19,11 @@ public interface ICourseService
 
 public class CourseService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMappingHelper mappingHelper) : ICourseService
 {
-    public async Task<EntityCreatedResponse> CreateAsync(CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
+    public async Task<CreatedEntityResponse> CreateAsync(CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
     {
+        var doesExist = await unitOfWork.Courses.DoesExistAsync(f => f.Name == request.Name, cancellationToken);
+        if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Course>("name"));
+
         var course = new Course
         {
             Name = request.Name,
@@ -28,17 +32,12 @@ public class CourseService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMa
         await unitOfWork.Courses.AddAsync(course, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new EntityCreatedResponse
-        {
-            Id = course.CourseId,
-            CreatedAt = course.CreatedAt,
-            CreatedBy = course.CreatedBy
-        };
+        return mappingHelper.MapTo<CreatedEntityResponse>(course);
     }
 
-    public async Task<CourseResponse> GetByCourseByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<CourseResponse> GetByCourseIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var course = await unitOfWork.Courses.GetByIdAsync(id, cancellationToken) ?? throw new ObjectNotFoundException($"Cannot find course with Id '{id}'");
+        var course = await unitOfWork.Courses.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Course>());
 
         return mappingHelper.MapTo<CourseResponse>(course);
     }
@@ -63,6 +62,9 @@ public class CourseService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMa
 
     public async Task<CourseResponse> UpdateCourseAsync(Guid id, CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
     {
+        var doesExist = await unitOfWork.Courses.DoesExistAsync(f => f.CourseId != id && f.Name == request.Name, cancellationToken);
+        if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Course>("name"));
+
         var course = await unitOfWork.Courses.Update(id, request, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
