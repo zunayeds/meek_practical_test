@@ -10,7 +10,7 @@ public static class AuthorizationExtensions
         {
             options.AddPolicy(Policies.StaffOnly, p => p.RequireRole(Roles.Staff));
             options.AddPolicy(Policies.StudentOnly, p => p.RequireRole(Roles.Student));
-            options.AddPolicy(Policies.StuffOrStudent, p => p.RequireRole(Roles.Staff, Roles.Student));
+            options.AddPolicy(Policies.StaffOrStudent, p => p.RequireRole(Roles.Staff, Roles.Student));
         });
 
         return services;

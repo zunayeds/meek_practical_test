@@ -1,6 +1,8 @@
-﻿using LearnWellUniversity_CMS.Application.DTOs.Requests;
+﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.DTOs.Requests;
 using LearnWellUniversity_CMS.Application.DTOs.Responses;
 using LearnWellUniversity_CMS.Domain.Models;
+using LearnWellUniversity_CMS.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -15,7 +17,7 @@ public interface IAuthService
     Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request);
 }
 
-public class AuthService(UserManager<ApplicationUser> userManager, IConfiguration config) : IAuthService
+public class AuthService(UserManager<ApplicationUser> userManager, IConfiguration config, IUnitOfWork unitOfWork) : IAuthService
 {
     public async Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request)
     {
@@ -29,14 +31,21 @@ public class AuthService(UserManager<ApplicationUser> userManager, IConfiguratio
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
-            new("firstName", user.FirstName),
-            new("lastName", user.LastName),
+            new(AdditionalClaims.FirstName, user.FirstName),
+            new(AdditionalClaims.LastName, user.LastName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
         foreach (var role in roles)
         {
-            claims.Add(new Claim("role", role));
+            claims.Add(new Claim(AdditionalClaims.Role, role));
+        }
+
+        if (roles.Contains(Roles.Student))
+        {
+            var studentId = await unitOfWork.Students.GetIdByUserIdAsync(user.Id);
+            if (!studentId.Equals(Guid.Empty))
+                claims.Add(new Claim(AdditionalClaims.StudentId, studentId.ToString()));
         }
 
         var token = BuildToken(claims, out var expiresAt);

@@ -5,7 +5,7 @@ using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class CourseRepository(AppDbContext dbContext, ICurrentUser currentUser) : Repository<Course>(dbContext, currentUser), ICourseRepository
+public class CourseRepository(AppDbContext dbContext, ICurrentUser currentUser, IMappingHelper mappingHelper) : Repository<Course>(dbContext, currentUser, mappingHelper), ICourseRepository
 {
 
 }

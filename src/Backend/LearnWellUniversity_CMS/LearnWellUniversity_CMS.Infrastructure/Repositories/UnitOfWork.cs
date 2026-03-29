@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser) : IUnitOfWork
+public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser, IMappingHelper mappingHelper) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
 
-    public IClassRepository Classes => new ClassRepository(dbContext, currentUser);
-    public ICourseRepository Courses => new CourseRepository(dbContext, currentUser);
-    public IStudentRepository Students => new StudentRepository(dbContext, currentUser);
+    public IClassRepository Classes => new ClassRepository(dbContext, currentUser, mappingHelper);
+    public ICourseRepository Courses => new CourseRepository(dbContext, currentUser, mappingHelper);
+    public IStudentRepository Students => new StudentRepository(dbContext, currentUser, mappingHelper);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         dbContext.SaveChangesAsync(cancellationToken);
@@ -45,6 +45,7 @@ public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser) : IUni
     {
         _transaction?.Dispose();
         dbContext.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public async ValueTask DisposeAsync()
@@ -54,5 +55,6 @@ public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser) : IUni
             await _transaction.DisposeAsync();
         }
         await dbContext.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

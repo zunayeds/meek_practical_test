@@ -5,5 +5,5 @@ namespace LearnWellUniversity_CMS.Application.Repositories;
 
 public interface IStudentRepository : IRepository<Student>
 {
-    
+    public Task<Guid> GetIdByUserIdAsync(Guid userId);
 }

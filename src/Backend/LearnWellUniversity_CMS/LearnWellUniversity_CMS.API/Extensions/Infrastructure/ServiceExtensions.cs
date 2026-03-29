@@ -13,6 +13,7 @@ public static class ServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IMappingHelper, MappingHelper>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IClassService, ClassService>();

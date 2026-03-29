@@ -4,5 +4,5 @@ public static class Policies
 {
     public const string StaffOnly = "StaffOnly";
     public const string StudentOnly = "StudentOnly";
-    public const string StuffOrStudent = "StuffOrStudent";
+    public const string StaffOrStudent = "StaffOrStudent";
 }

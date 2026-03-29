@@ -3,4 +3,5 @@
 public interface ICurrentUser
 {
     public Guid UserId { get; }
+    public Guid? StudentId { get; }
 }

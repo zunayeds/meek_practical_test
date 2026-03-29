@@ -1,4 +1,6 @@
 using LearnWellUniversity_CMS.API.Extensions.Infrastructure;
+using LearnWellUniversity_CMS.Application.Abstractions;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.ConfigureDbContext();
 
 builder.ConfigureAuthentication();
 builder.Services.ConfigureAuthorization();
+
+builder.Services.AddAutoMapper(cfg => { }, Assembly.GetAssembly(typeof(ICurrentUser)));
 
 var app = builder.Build();
 

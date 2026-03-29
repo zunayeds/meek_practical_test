@@ -2,29 +2,25 @@
 using LearnWellUniversity_CMS.Domain.Models.Base;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity.Core;
 using System.Linq.Expressions;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T>(AppDbContext dbContext, ICurrentUser currentUser, IMappingHelper mappingHelper) : IRepository<T> where T : class
 {
-    protected readonly AppDbContext _dbContext;
-    protected readonly DbSet<T> _dbSet;
-    protected readonly ICurrentUser _currentUser;
-
-    public Repository(AppDbContext dbContext, ICurrentUser currentUser)
-    {
-        _dbContext = dbContext;
-        _dbSet = dbContext.Set<T>();
-        _currentUser = currentUser;
-    }
+    protected readonly AppDbContext _dbContext = dbContext;
+    protected readonly DbSet<T> _dbSet = dbContext.Set<T>();
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _dbSet.FindAsync([id], cancellationToken);
 
-    public IQueryable<T> GetAll() => _dbSet.AsQueryable();
+    public async Task<T?> GetByFilterAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default) =>
+        await _dbSet.FirstOrDefaultAsync(filter, cancellationToken);
 
-    public IQueryable<T> GetByFilters(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null)
+    public IQueryable<T> GetAllAsQueryable() => _dbSet.AsQueryable();
+
+    public IQueryable<T> GetByFiltersAsQueryable(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null)
     {
         var query = _dbSet.AsQueryable();
         if (filter is not null)
@@ -39,31 +35,47 @@ public class Repository<T> : IRepository<T> where T : class
         return query;
     }
 
+    public async Task<List<TResponseType>> GetByFiltersAsync<TResponseType>(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null, CancellationToken cancellationToken = default) where TResponseType : class
+    {
+        var query = GetByFiltersAsQueryable(filter, page, pageSize);
+
+        return await mappingHelper.ProjectTo<TResponseType>(query).ToListAsync(cancellationToken); ;
+    }
+
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         if (entity is IAuditTrailBase auditTrailBase)
         {
             auditTrailBase.CreatedAt = DateTimeOffset.UtcNow;
-            auditTrailBase.CreatedBy = _currentUser.UserId;
+            auditTrailBase.CreatedBy = currentUser.UserId;
         }
         else if (entity is AssignmentBase assignmentBase)
         {
             assignmentBase.AssignedAt = DateTimeOffset.UtcNow;
-            assignmentBase.AssignedBy = _currentUser.UserId;
+            assignmentBase.AssignedBy = currentUser.UserId;
         }
 
         await _dbSet.AddAsync(entity, cancellationToken);
     }
 
-    public void Update(T entity)
+    public async Task<T> Update<TUpdate>(Guid Id, TUpdate update, CancellationToken cancellationToken = default) where TUpdate : class
     {
+        var entity = await _dbSet.FindAsync([Id], cancellationToken) ?? throw new ObjectNotFoundException();
+
+        entity = mappingHelper.MapTo(update, entity);
+
         if (entity is IAuditTrailBase auditTrailBase)
         {
             auditTrailBase.ModifiedAt = DateTimeOffset.UtcNow;
-            auditTrailBase.ModifiedBy = _currentUser.UserId;
+            auditTrailBase.ModifiedBy = currentUser.UserId;
         }
         _dbSet.Update(entity);
+
+        return entity;
     }
 
-    public void Remove(T entity) => _dbSet.Remove(entity);
+    public async Task DeleteByFilterAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)
+    {
+        await _dbSet.Where(filter).ExecuteDeleteAsync(cancellationToken);
+    }
 }
