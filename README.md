@@ -56,7 +56,7 @@ The API will automatically apply EF migrations and seed a default admin account 
 
 ## ER Diagram
 
-!\[ER Diagram]\(/diagram/erd.png null)
+![ER Diagram](/diagram/erd.png)
 
 ### Edit Steps
 
