@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterServices();
 
+builder.Services.ConfigureExceptionHandler();
+
 builder.Services.AddControllers();
 
 builder.Services.ConfigureSwaggerDoc();
@@ -24,6 +26,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
 
 app.UseSwaggerDocWithUI();
 
