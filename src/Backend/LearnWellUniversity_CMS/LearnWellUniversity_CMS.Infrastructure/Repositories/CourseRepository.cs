@@ -4,10 +4,11 @@ using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using LearnWellUniversity_CMS.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelper) : Repository<Course>(dbContext, mappingHelper), ICourseRepository
+public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelper, ILogger<CourseRepository> logger) : Repository<Course>(dbContext, mappingHelper), ICourseRepository
 {
     public async Task AddRemoveStudentsAsync(Guid courseId, List<Guid> addStudentIds, List<Guid> removeStudentIds, CancellationToken cancellationToken = default)
     {
@@ -22,13 +23,17 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
         {
             removeStudentIds = removeStudentIds.Distinct().ToList();
 
+            logger.LogInformation("Removing provided students from classes in course with id '{course}'", courseId);
             await _dbContext.StudentClasses
                 .Where(w => classIds.Contains(w.ClassId) && removeStudentIds.Contains(w.StudentId))
                 .ExecuteDeleteAsync(cancellationToken);
+            logger.LogWarning("Removed provided students from classes in course with id '{course}'", courseId);
 
+            logger.LogInformation("Removing provided students from course with id '{course}'", courseId);
             await _dbContext.StudentCourses
                 .Where(w => removeStudentIds.Contains(w.StudentId))
                 .ExecuteDeleteAsync(cancellationToken);
+            logger.LogWarning("Removed provided students from course with id '{course}'", courseId);
         }
 
         if (addStudentIds.Count > 0)
@@ -53,6 +58,7 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
                     throw new NotFoundException("Some of the student id(s) are not valid");
                 }
 
+                logger.LogInformation("Enrolling provided students in course with id '{courseId}'", courseId);
                 var newStudentsInCourse = newStudentIds
                     .Select(studentId => new StudentCourse
                     {
@@ -60,7 +66,9 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
                         CourseId = courseId,
                     });
                 await _dbContext.StudentCourses.AddRangeAsync(newStudentsInCourse, cancellationToken);
+                logger.LogInformation("Enrolled provided students in course with id '{courseId}'", courseId);
 
+                logger.LogInformation("Enrolling provided students in classes of course with id '{courseId}'", courseId);
                 var newStudentsInClass = newStudentIds
                     .SelectMany(studentId => classIds, (studentId, classId) => new StudentClass
                     {
@@ -68,6 +76,7 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
                         ClassId = classId
                     });
                 await _dbContext.StudentClasses.AddRangeAsync(newStudentsInClass, cancellationToken);
+                logger.LogInformation("Enrolled provided students in classes of course with id '{courseId}'", courseId);
             }
         }
     }
@@ -78,10 +87,12 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
 
         if (removeClassIds.Count > 0)
         {
+            logger.LogInformation("Removing provided classes from course with id '{course}'", courseId);
             removeClassIds = removeClassIds.Distinct().ToList();
             await _dbContext.CourseClasses
                 .Where(w => removeClassIds.Contains(w.ClassId))
                 .ExecuteDeleteAsync(cancellationToken);
+            logger.LogWarning("Removed provided classes from course with id '{course}'", courseId);
         }
 
         if (addClassIds.Count > 0)
@@ -106,6 +117,7 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
                     throw new NotFoundException("Some of the class id(s) are not valid");
                 }
 
+                logger.LogInformation("Adding provided classes in course with id '{courseId}'", courseId);
                 var newClasses = newClassIds
                     .Select(classId => new CourseClass
                     {
@@ -113,6 +125,7 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
                         ClassId = classId
                     });
                 await _dbContext.CourseClasses.AddRangeAsync(newClasses, cancellationToken);
+                logger.LogInformation("Added provided classes in course with id '{courseId}'", courseId);
             }
         }
     }

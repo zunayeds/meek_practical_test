@@ -1,4 +1,5 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Application.Services;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using LearnWellUniversity_CMS.Infrastructure.Repositories;
@@ -13,6 +14,9 @@ public static class ServiceExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<IClassRepository, ClassRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IMappingHelper, MappingHelper>();
         services.AddScoped<IDataSeeder, DataSeeder>();

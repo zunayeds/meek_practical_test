@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser, IMappingHelper mappingHelper) : IUnitOfWork
+public class UnitOfWork(AppDbContext dbContext, IClassRepository classes, ICourseRepository courses, IStudentRepository students) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
 
-    public IClassRepository Classes => new ClassRepository(dbContext, mappingHelper);
-    public ICourseRepository Courses => new CourseRepository(dbContext, mappingHelper);
-    public IStudentRepository Students => new StudentRepository(dbContext, mappingHelper, currentUser);
+    public IClassRepository Classes => classes;
+    public ICourseRepository Courses => courses;
+    public IStudentRepository Students => students;
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         dbContext.SaveChangesAsync(cancellationToken);

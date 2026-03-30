@@ -7,6 +7,7 @@ using LearnWellUniversity_CMS.Shared.Constants;
 using LearnWellUniversity_CMS.Shared.Exceptions;
 using LearnWellUniversity_CMS.Shared.Utilities;
 using LinqKit;
+using Microsoft.Extensions.Logging;
 
 namespace LearnWellUniversity_CMS.Application.Services;
 
@@ -21,7 +22,7 @@ public interface IStudentService
     Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
 }
 
-public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper) : IStudentService
+public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper, ILogger<StudentService> logger) : IStudentService
 {
     protected IStudentRepository _students = unitOfWork.Students;
 
@@ -51,7 +52,9 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
                 CreatedAt = DateTimeOffset.UtcNow,
             };
 
+            logger.LogInformation("Creating user with 'Student' role for student '{FirstName} {LastName}'", request.FirstName, request.LastName);
             var (userId, password) = await userService.CreateWithRoleAsync(user, Roles.Student, null, true);
+            logger.LogInformation("Created user with 'Student' role for student '{FirstName} {LastName}'", request.FirstName, request.LastName);
 
             var student = new Student
             {
