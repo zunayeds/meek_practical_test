@@ -9,13 +9,15 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class StudentController(IStudentService studentService) : ControllerBase
+public class StudentController(IStudentService studentService, ILogger<StudentController> logger) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Create([FromBody] CreateUpdateStudentRequest request)
     {
+        logger.LogInformation("Creating student '{FirstName} {LastName}'", request.FirstName, request.LastName);
         var student = await studentService.CreateAsync(request);
+        logger.LogInformation("Successfully created student '{FirstName} {LastName}'", request.FirstName, request.LastName);
         return Ok(student);
     }
 
@@ -39,7 +41,9 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [Authorize(Policy = Policies.StaffOrStudent)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateStudentRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Updating student with id '{id}'", id);
         var student = await studentService.UpdateStudentAsync(id, request, cancellationToken);
+        logger.LogInformation("Updated student with id '{id}'", id);
         return Ok(student);
     }
 
@@ -47,7 +51,9 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Deleting student with id '{id}'", id);
         await studentService.DeleteStudentByIdAsync(id, cancellationToken);
+        logger.LogWarning("Deleted student with id '{id}'", id);
         return NoContent();
     }
 

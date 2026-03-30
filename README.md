@@ -11,6 +11,7 @@ A Course Management System for Learn Well University, comprising a .NET 9 Web AP
 - **Swagger (Open API)**
 - **PostgreSQL (latest)**
 - **JWT (Bearer Authentication)**
+- **Serilog + Seq (Logging)**
 
 ## Prerequisites
 
@@ -24,7 +25,7 @@ A Course Management System for Learn Well University, comprising a .NET 9 Web AP
 ## Running the Application
 
 ```bash
-docker compose up --build
+docker compose up --build -d          # start containers in detached mode
 ```
 
 Once running, the containers start on an internal bridge network:
@@ -33,6 +34,7 @@ Once running, the containers start on an internal bridge network:
 | --------- | ------------ | -------------------------- |
 | `api`     | `8080`       | .NET 9 Web API             |
 | `db`      | *(none)*     | PostgreSQL — internal only |
+| `seq`     | `8081` (UI)  | Structured log viewer      |
 
 The API will automatically apply EF migrations and seed a default admin account on startup.
 
@@ -53,6 +55,7 @@ The API will automatically apply EF migrations and seed a default admin account 
 | Service | Login | Password  |
 |---------|-------|-----------|
 | API (Staff) | admin@learnwell.edu | Admin@123 |
+| SEQ ([http://localhost:8081](http://localhost:8081)) | admin | Admin@123 |
 
 ## ER Diagram
 
@@ -68,6 +71,6 @@ The API will automatically apply EF migrations and seed a default admin account 
 
 ```bash
 docker compose down          # stop and remove containers
-docker compose down -v       # also remove volumes (wipes the database)
+docker compose down -v       # also remove volumes (wipes the database and seq data)
 ```
 

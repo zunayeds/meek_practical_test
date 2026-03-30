@@ -1,10 +1,13 @@
 using LearnWellUniversity_CMS.API.Extensions.Infrastructure;
 using LearnWellUniversity_CMS.Application.Abstractions;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterServices();
+
+builder.ConfigureStructuralLogging();
 
 builder.Services.ConfigureExceptionHandler();
 
@@ -27,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 
 app.UseSwaggerDocWithUI();

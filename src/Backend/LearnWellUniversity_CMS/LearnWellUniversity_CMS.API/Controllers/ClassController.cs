@@ -9,13 +9,15 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class ClassController(IClassService classService) : ControllerBase
+public class ClassController(IClassService classService, ILogger<ClassController> logger) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Create([FromBody] CreateClassRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Creating class '{Name}'", request.Name);
         var @class = await classService.CreateAsync(request, cancellationToken);
+        logger.LogInformation("Successfully created class '{Name}'", request.Name);
         return Ok(@class);
     }
 
@@ -39,7 +41,9 @@ public class ClassController(IClassService classService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateClassRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Updating class with id '{id}'", id);
         var course = await classService.UpdateClassAsync(id, request, cancellationToken);
+        logger.LogInformation("Updated class with id '{id}'", id);
         return Ok(course);
     }
 
@@ -47,7 +51,9 @@ public class ClassController(IClassService classService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Deleting class with id '{id}'", id);
         await classService.DeleteClassByIdAsync(id, cancellationToken);
+        logger.LogWarning("Deleted class with id '{id}'", id);
         return NoContent();
     }
 
@@ -55,7 +61,9 @@ public class ClassController(IClassService classService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> AddRemoveStudents(Guid classId, [FromBody] AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Adding/removing students from class with id '{classId}'", classId);
         await classService.AddRemoveStudentsInClassAsync(classId, request, cancellationToken);
+        logger.LogInformation("Added/removed students from class with id '{classId}'", classId);
         return NoContent();
     }
 

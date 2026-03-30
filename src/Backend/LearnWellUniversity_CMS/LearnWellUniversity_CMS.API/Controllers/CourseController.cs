@@ -9,13 +9,15 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class CourseController(ICourseService courseService) : ControllerBase
+public class CourseController(ICourseService courseService, ILogger<ClassController> logger) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Create([FromBody] CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Creating course '{Name}'", request.Name);
         var course = await courseService.CreateAsync(request, cancellationToken);
+        logger.LogInformation("Successfully created course '{Name}'", request.Name);
         return Ok(course);
     }
 
@@ -39,7 +41,9 @@ public class CourseController(ICourseService courseService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateCourseRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Updating course with id '{id}'", id);
         var course = await courseService.UpdateCourseAsync(id, request, cancellationToken);
+        logger.LogInformation("Updated course with id '{id}'", id);
         return Ok(course);
     }
 
@@ -47,7 +51,9 @@ public class CourseController(ICourseService courseService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Deleting course with id '{id}'", id);
         await courseService.DeleteCourseByIdAsync(id, cancellationToken);
+        logger.LogWarning("Deleted course with id '{id}'", id);
         return NoContent();
     }
 
@@ -55,7 +61,9 @@ public class CourseController(ICourseService courseService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> AddRemoveStudents(Guid courseId, [FromBody] AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Adding/removing students from course with id '{courseId}'", courseId);
         await courseService.AddRemoveStudentsInCourseAsync(courseId, request, cancellationToken);
+        logger.LogInformation("Added/removed students from course with id '{courseId}'", courseId);
         return NoContent();
     }
 
@@ -79,7 +87,9 @@ public class CourseController(ICourseService courseService) : ControllerBase
     [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> AddRemoveClasses(Guid courseId, [FromBody] AddRemoveClassessRequest request, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Adding/removing classes from course with id '{courseId}'", courseId);
         await courseService.AddRemoveClassesInCourseAsync(courseId, request, cancellationToken);
+        logger.LogInformation("Added/removed classes from course with id '{courseId}'", courseId);
         return NoContent();
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace LearnWellUniversity_CMS.API.Middlewares;
 
-public class GlobalExceptionHandler : IExceptionHandler
+public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
@@ -14,6 +14,13 @@ public class GlobalExceptionHandler : IExceptionHandler
             UnauthorizedAccessException => (StatusCodes.Status403Forbidden, "Forbidden"),
             _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
         };
+
+        if (statusCode == StatusCodes.Status500InternalServerError)
+            logger.LogError(exception, "Unhandled exception on {Method} {Path}",
+                httpContext.Request.Method, httpContext.Request.Path);
+        else
+            logger.LogWarning(exception, "{Title} on {Method} {Path}",
+                title, httpContext.Request.Method, httpContext.Request.Path);
 
         var errorResponse = new
         {

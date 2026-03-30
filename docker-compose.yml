@@ -15,6 +15,19 @@ services:
       timeout: 5s
       retries: 5
 
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD}
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    volumes:
+      - seq_data:/data
+    networks:
+      - learnwell_cms_network
+
   api:
     build:
       context: ./src/Backend/LearnWellUniversity_CMS
@@ -29,9 +42,12 @@ services:
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
       Jwt__ExpiryMinutes: ${JWT_EXPIRY_MINUTES}
+      Seq__Url: "http://seq:5341"
     depends_on:
       db:
         condition: service_healthy
+      seq:
+        condition: service_started
     networks:
       - learnwell_cms_network
 
@@ -41,3 +57,4 @@ networks:
 
 volumes:
   postgres_data:
+  seq_data:
