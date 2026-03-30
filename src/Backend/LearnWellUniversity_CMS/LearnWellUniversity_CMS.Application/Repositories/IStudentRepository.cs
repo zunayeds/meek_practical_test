@@ -5,5 +5,6 @@ namespace LearnWellUniversity_CMS.Application.Repositories;
 
 public interface IStudentRepository : IRepository<Student>
 {
-    public Task<Guid> GetIdByUserIdAsync(Guid userId);
+    public Task<Guid> GetIdByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
 }

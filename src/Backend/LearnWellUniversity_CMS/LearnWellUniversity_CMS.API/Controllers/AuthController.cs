@@ -9,9 +9,9 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticationRequest request)
+    public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticationRequest request, CancellationToken cancellationToken = default)
     {
-        var result = await authService.AuthenticateAsync(request);
+        var result = await authService.AuthenticateAsync(request, cancellationToken);
         if (result is null)
         {
             return Unauthorized(new { Message = "Invalid username or password." });

@@ -9,9 +9,9 @@ public class UnitOfWork(AppDbContext dbContext, ICurrentUser currentUser, IMappi
 {
     private IDbContextTransaction? _transaction;
 
-    public IClassRepository Classes => new ClassRepository(dbContext, currentUser, mappingHelper);
-    public ICourseRepository Courses => new CourseRepository(dbContext, currentUser, mappingHelper);
-    public IStudentRepository Students => new StudentRepository(dbContext, currentUser, mappingHelper);
+    public IClassRepository Classes => new ClassRepository(dbContext, mappingHelper);
+    public ICourseRepository Courses => new CourseRepository(dbContext, mappingHelper);
+    public IStudentRepository Students => new StudentRepository(dbContext, mappingHelper, currentUser);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         dbContext.SaveChangesAsync(cancellationToken);

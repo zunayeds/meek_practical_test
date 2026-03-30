@@ -1,6 +1,7 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
 using LearnWellUniversity_CMS.Application.DTOs.Requests;
 using LearnWellUniversity_CMS.Application.DTOs.Responses;
+using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Shared.Constants;
 using LearnWellUniversity_CMS.Shared.Exceptions;
@@ -16,19 +17,22 @@ public interface IStudentService
     Task<List<StudentResponseBase>> GetStudentsAsync(GetStudentByFiltersRequest request, CancellationToken cancellationToken = default);
     Task<StudentResponse> UpdateStudentAsync(Guid id, CreateUpdateStudentRequest request, CancellationToken cancellationToken = default);
     Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
 }
 
 public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper) : IStudentService
 {
+    protected IStudentRepository _students = unitOfWork.Students;
+
     public async Task<CreateStudentResponse> CreateAsync(CreateUpdateStudentRequest request, CancellationToken cancellationToken = default)
     {
-        var doesExist = await unitOfWork.Students.DoesExistAsync(f => f.EmailAddress == request.EmailAddress, cancellationToken);
+        var doesExist = await _students.DoesExistAsync(f => f.EmailAddress == request.EmailAddress, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Student>("email address"));
 
-        doesExist = await unitOfWork.Students.DoesExistAsync(f => f.PhoneNumber == request.PhoneNumber, cancellationToken);
+        doesExist = await _students.DoesExistAsync(f => f.PhoneNumber == request.PhoneNumber, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Student>("phone number"));
 
-        await unitOfWork.BeginTransactionAsync();
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -57,7 +61,7 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
                 PhoneNumber = request.PhoneNumber,
                 UserId = userId
             };
-            await unitOfWork.Students.AddAsync(student);
+            await _students.AddAsync(student, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             await unitOfWork.CommitAsync(cancellationToken);
@@ -76,7 +80,7 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task<StudentResponse> GetByStudentIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var student = await unitOfWork.Students.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException($"Cannot find Student with Id '{id}'");
+        var student = await _students.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException($"Cannot find Student with Id '{id}'");
 
         return mappingHelper.MapTo<StudentResponse>(student);
     }
@@ -98,19 +102,19 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
             filter = filter.And(f => f.PhoneNumber.Contains(request.PhoneNumber));
         }
 
-        return await unitOfWork.Students
+        return await _students
             .GetByFiltersAsync<StudentResponseBase>(filter, request.Page, request.PageSize, cancellationToken);
     }
 
     public async Task<StudentResponse> UpdateStudentAsync(Guid id, CreateUpdateStudentRequest request, CancellationToken cancellationToken = default)
     {
-        var doesExist = await unitOfWork.Students.DoesExistAsync(f => f.StudentId != id && f.EmailAddress == request.EmailAddress, cancellationToken);
+        var doesExist = await _students.DoesExistAsync(f => f.StudentId != id && f.EmailAddress == request.EmailAddress, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Student>("email address"));
 
-        doesExist = await unitOfWork.Students.DoesExistAsync(f => f.StudentId != id && f.PhoneNumber == request.PhoneNumber, cancellationToken);
+        doesExist = await _students.DoesExistAsync(f => f.StudentId != id && f.PhoneNumber == request.PhoneNumber, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Student>("phone number"));
 
-        var student = await unitOfWork.Students.Update(id, request, cancellationToken);
+        var student = await _students.Update(id, request, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return mappingHelper.MapTo<StudentResponse>(student);
@@ -118,7 +122,12 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await unitOfWork.Students.DeleteByFilterAsync(f => f.StudentId == id, cancellationToken);
+        await _students.DeleteByFilterAsync(f => f.StudentId == id, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default)
+    {
+        return await _students.GetOtherStudentNamesByClassIdAsync(classId, cancellationToken);
     }
 }

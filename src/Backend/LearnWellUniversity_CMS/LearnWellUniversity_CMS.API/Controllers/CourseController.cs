@@ -50,4 +50,20 @@ public class CourseController(ICourseService courseService) : ControllerBase
         await courseService.DeleteCourseByIdAsync(id, cancellationToken);
         return NoContent();
     }
+
+    [HttpPost("addRemoveStudents/{courseId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> AddRemoveStudents(Guid courseId, [FromBody] AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
+    {
+        await courseService.AddRemoveStudentsInCourseAsync(courseId, request, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpGet("getStudents/{courseId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> GetStudents(Guid courseId, CancellationToken cancellationToken = default)
+    {
+        var students = await courseService.GetStudentsInCourseAsync(courseId, cancellationToken);
+        return Ok(students);
+    }
 }

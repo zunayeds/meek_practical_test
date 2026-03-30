@@ -1,5 +1,4 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
-using LearnWellUniversity_CMS.Domain.Models.Base;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Entity.Core;
@@ -7,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace LearnWellUniversity_CMS.Infrastructure.Repositories;
 
-public class Repository<T>(AppDbContext dbContext, ICurrentUser currentUser, IMappingHelper mappingHelper) : IRepository<T> where T : class
+public class Repository<T>(AppDbContext dbContext, IMappingHelper mappingHelper) : IRepository<T> where T : class
 {
     protected readonly AppDbContext _dbContext = dbContext;
     protected readonly DbSet<T> _dbSet = dbContext.Set<T>();
@@ -44,17 +43,6 @@ public class Repository<T>(AppDbContext dbContext, ICurrentUser currentUser, IMa
 
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
     {
-        if (entity is IAuditTrailBase auditTrailBase)
-        {
-            auditTrailBase.CreatedAt = DateTimeOffset.UtcNow;
-            auditTrailBase.CreatedBy = currentUser.UserId;
-        }
-        else if (entity is AssignmentBase assignmentBase)
-        {
-            assignmentBase.AssignedAt = DateTimeOffset.UtcNow;
-            assignmentBase.AssignedBy = currentUser.UserId;
-        }
-
         await _dbSet.AddAsync(entity, cancellationToken);
     }
 
@@ -63,12 +51,7 @@ public class Repository<T>(AppDbContext dbContext, ICurrentUser currentUser, IMa
         var entity = await _dbSet.FindAsync([Id], cancellationToken) ?? throw new ObjectNotFoundException();
 
         entity = mappingHelper.MapTo(update, entity);
-
-        if (entity is IAuditTrailBase auditTrailBase)
-        {
-            auditTrailBase.ModifiedAt = DateTimeOffset.UtcNow;
-            auditTrailBase.ModifiedBy = currentUser.UserId;
-        }
+        _dbSet.Entry(entity).State = EntityState.Modified;
         _dbSet.Update(entity);
 
         return entity;

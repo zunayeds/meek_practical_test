@@ -1,11 +1,13 @@
-﻿using LearnWellUniversity_CMS.Domain.Models;
+﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Domain.Models;
+using LearnWellUniversity_CMS.Domain.Models.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnWellUniversity_CMS.Infrastructure.DataAccess;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options)
+public class AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser currentUser)
 : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Course> Courses => Set<Course>();
@@ -99,5 +101,43 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             entity.HasOne(sc => sc.Class).WithMany(c => c.StudentClasses).HasForeignKey(sc => sc.ClassId);
             entity.HasOne(sc => sc.AssignedByUser).WithMany().HasForeignKey(sc => sc.AssignedBy).OnDelete(DeleteBehavior.Restrict);
         });
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ManageTrackableEntities();
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void ManageTrackableEntities()
+    {
+        var itemsWithAuditTrail = ChangeTracker.Entries<IAuditTrailBase>()
+            .Where(w => w.State == EntityState.Added || w.State == EntityState.Modified);
+
+        if (itemsWithAuditTrail.Any())
+        {
+            var newItems = itemsWithAuditTrail.Where(w => w.State == EntityState.Added).ToList();
+            foreach (var item in newItems)
+            {
+                item.Entity.CreatedAt = DateTimeOffset.UtcNow;
+                item.Entity.CreatedBy = currentUser.UserId;
+            }
+
+            var updatedItems = itemsWithAuditTrail.Where(w => w.State == EntityState.Modified).ToList();
+            foreach (var item in updatedItems)
+            {
+                item.Entity.ModifiedAt = DateTimeOffset.UtcNow;
+                item.Entity.ModifiedBy = currentUser.UserId;
+            }
+        }
+
+        var itemsWithAssignmentBase = ChangeTracker.Entries<AssignmentBase>()
+            .Where(w => w.State == EntityState.Added);
+
+        foreach (var item in itemsWithAssignmentBase)
+        {
+            item.Entity.AssignedAt = DateTimeOffset.UtcNow;
+            item.Entity.AssignedBy = currentUser.UserId;
+        }
     }
 }

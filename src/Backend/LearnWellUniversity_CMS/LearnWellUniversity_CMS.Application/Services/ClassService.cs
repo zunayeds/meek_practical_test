@@ -1,6 +1,7 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
 using LearnWellUniversity_CMS.Application.DTOs.Requests;
 using LearnWellUniversity_CMS.Application.DTOs.Responses;
+using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Shared.Exceptions;
 using LearnWellUniversity_CMS.Shared.Utilities;
@@ -15,13 +16,17 @@ public interface IClassService
     Task<List<ClassResponseBase>> GetClasssAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
     Task<ClassResponse> UpdateClassAsync(Guid id, CreateUpdateClassRequest request, CancellationToken cancellationToken = default);
     Task DeleteClassByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddRemoveStudentsInClassAsync(Guid classId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default);
+    Task<List<StudentResponseBase>> GetStudentsInClassAsync(Guid classId, CancellationToken cancellationToken = default);
 }
 
 public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMappingHelper mappingHelper) : IClassService
 {
+    protected IClassRepository _classes = unitOfWork.Classes;
+
     public async Task<CreatedEntityResponse> CreateAsync(CreateClassRequest request, CancellationToken cancellationToken = default)
     {
-        var doesExist = await unitOfWork.Classes.DoesExistAsync(f => f.Name == request.Name, cancellationToken);
+        var doesExist = await _classes.DoesExistAsync(f => f.Name == request.Name, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Class>("name"));
 
         var @class = new Class
@@ -29,7 +34,7 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
             Name = request.Name,
             Description = request.Description,
         };
-        await unitOfWork.Classes.AddAsync(@class);
+        await _classes.AddAsync(@class);
         await unitOfWork.SaveChangesAsync();
 
         return mappingHelper.MapTo<CreatedEntityResponse>(@class);
@@ -37,7 +42,7 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
 
     public async Task<ClassResponse> GetByClassIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var @class = await unitOfWork.Classes.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Class>());
+        var @class = await _classes.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Class>());
 
         return mappingHelper.MapTo<ClassResponse>(@class);
     }
@@ -56,16 +61,16 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
             filter = filter.And(f => f.StudentClasses.Any(w => w.StudentId == currentUser.StudentId));
         }
 
-        return await unitOfWork.Classes
+        return await _classes
             .GetByFiltersAsync<ClassResponseBase>(filter, request.Page, request.PageSize, cancellationToken);
     }
 
     public async Task<ClassResponse> UpdateClassAsync(Guid id, CreateUpdateClassRequest request, CancellationToken cancellationToken = default)
     {
-        var doesExist = await unitOfWork.Classes.DoesExistAsync(f => f.ClassId != id && f.Name == request.Name, cancellationToken);
+        var doesExist = await _classes.DoesExistAsync(f => f.ClassId != id && f.Name == request.Name, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Class>("name"));
 
-        var @class = await unitOfWork.Classes.Update(id, request, cancellationToken);
+        var @class = await _classes.Update(id, request, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return mappingHelper.MapTo<ClassResponse>(@class);
@@ -73,7 +78,21 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
 
     public async Task DeleteClassByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await unitOfWork.Classes.DeleteByFilterAsync(f => f.ClassId == id, cancellationToken);
+        await _classes.DeleteByFilterAsync(f => f.ClassId == id, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task AddRemoveStudentsInClassAsync(Guid classId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
+    {
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
+        await _classes.AddRemoveStudentsAsync(classId, request.AddStudentIds, request.RemoveStudentIds, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
+    }
+
+    public async Task<List<StudentResponseBase>> GetStudentsInClassAsync(Guid classId, CancellationToken cancellationToken = default)
+    {
+        var filter = PredicateBuilder.New<Student>(f => f.StudentClasses.Any(w => w.ClassId == classId));
+        return await unitOfWork.Students.GetByFiltersAsync<StudentResponseBase>(filter, cancellationToken: cancellationToken);
     }
 }

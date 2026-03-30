@@ -50,4 +50,20 @@ public class ClassController(IClassService classService) : ControllerBase
         await classService.DeleteClassByIdAsync(id, cancellationToken);
         return NoContent();
     }
+
+    [HttpPost("addRemoveStudents/{classId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> AddRemoveStudents(Guid classId, [FromBody] AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
+    {
+        await classService.AddRemoveStudentsInClassAsync(classId, request, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpGet("getStudents/{classId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> GetStudents(Guid classId, CancellationToken cancellationToken = default)
+    {
+        var students = await classService.GetStudentsInClassAsync(classId, cancellationToken);
+        return Ok(students);
+    }
 }

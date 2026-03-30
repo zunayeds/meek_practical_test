@@ -14,12 +14,12 @@ namespace LearnWellUniversity_CMS.Application.Services;
 
 public interface IAuthService
 {
-    Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request);
+    Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request, CancellationToken cancellationToken = default);
 }
 
 public class AuthService(UserManager<ApplicationUser> userManager, IConfiguration config, IUnitOfWork unitOfWork) : IAuthService
 {
-    public async Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request)
+    public async Task<AuthenticationResponse?> AuthenticateAsync(AuthenticationRequest request, CancellationToken cancellationToken = default)
     {
         var user = await userManager.FindByNameAsync(request.UserName);
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
@@ -43,7 +43,7 @@ public class AuthService(UserManager<ApplicationUser> userManager, IConfiguratio
 
         if (roles.Contains(Roles.Student))
         {
-            var studentId = await unitOfWork.Students.GetIdByUserIdAsync(user.Id);
+            var studentId = await unitOfWork.Students.GetIdByUserIdAsync(user.Id, cancellationToken);
             if (!studentId.Equals(Guid.Empty))
                 claims.Add(new Claim(AdditionalClaims.StudentId, studentId.ToString()));
         }

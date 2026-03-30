@@ -1,3 +1,3 @@
 ﻿namespace LearnWellUniversity_CMS.Shared.Exceptions;
 
-public class AlreadyExistException(string message, Exception? originalException) : Exception(message, originalException);
+public class AlreadyExistException(string message, Exception? originalException = null) : Exception(message, originalException);
