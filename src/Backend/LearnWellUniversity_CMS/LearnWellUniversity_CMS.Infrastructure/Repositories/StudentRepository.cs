@@ -1,4 +1,5 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.DTOs.Responses;
 using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
@@ -31,5 +32,19 @@ public class StudentRepository(AppDbContext dbContext, IMappingHelper mappingHel
             .Where(w => w.StudentId != studentId)
             .Select(s => string.Join(" ", s.FirstName, s.LastName))
             .ToList();
+    }
+
+    public async Task<List<StudentClassResponse>> GetClassesAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.StudentClasses
+            .Where(w => w.StudentId == studentId)
+            .Select(s => new StudentClassResponse
+            {
+                ClassId = s.ClassId,
+                Name = s.Class.Name,
+                AssignedAt = s.AssignedAt,
+                AssignedBy = s.AssignedByUser.FirstName + " " + s.AssignedByUser.LastName
+            })
+            .ToListAsync();
     }
 }

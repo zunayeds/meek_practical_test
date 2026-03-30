@@ -1,5 +1,7 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.Repositories;
 using LearnWellUniversity_CMS.Application.Services;
+using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using LearnWellUniversity_CMS.Infrastructure.Repositories;
 using LearnWellUniversity_CMS.Infrastructure.Services;
 
@@ -14,6 +16,7 @@ public static class ServiceExtensions
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IMappingHelper, MappingHelper>();
+        services.AddScoped<IDataSeeder, DataSeeder>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IClassService, ClassService>();

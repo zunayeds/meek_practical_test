@@ -18,6 +18,7 @@ public interface IStudentService
     Task<StudentResponse> UpdateStudentAsync(Guid id, CreateUpdateStudentRequest request, CancellationToken cancellationToken = default);
     Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
+    Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
 }
 
 public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper) : IStudentService
@@ -80,7 +81,7 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task<StudentResponse> GetByStudentIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var student = await _students.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException($"Cannot find Student with Id '{id}'");
+        var student = await _students.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
 
         return mappingHelper.MapTo<StudentResponse>(student);
     }
@@ -108,6 +109,8 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task<StudentResponse> UpdateStudentAsync(Guid id, CreateUpdateStudentRequest request, CancellationToken cancellationToken = default)
     {
+        await ValidateStudentExistanceAsync(id);
+
         var doesExist = await _students.DoesExistAsync(f => f.StudentId != id && f.EmailAddress == request.EmailAddress, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Student>("email address"));
 
@@ -122,6 +125,7 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        await ValidateStudentExistanceAsync(id);
         await _students.DeleteByFilterAsync(f => f.StudentId == id, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
@@ -129,5 +133,19 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
     public async Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default)
     {
         return await _students.GetOtherStudentNamesByClassIdAsync(classId, cancellationToken);
+    }
+
+    public async Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        await ValidateStudentExistanceAsync(studentId);
+        return await _students.GetClassesAsync(studentId, cancellationToken);
+    }
+
+    private async Task ValidateStudentExistanceAsync(Guid studentId)
+    {
+        if (!await _students.DoesExistAsync(f => f.StudentId == studentId))
+        {
+            throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
+        }
     }
 }

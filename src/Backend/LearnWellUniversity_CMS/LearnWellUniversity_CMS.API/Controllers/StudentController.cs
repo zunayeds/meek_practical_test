@@ -51,11 +51,19 @@ public class StudentController(IStudentService studentService) : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("getStudents/{classId:guid}")]
+    [HttpGet("getOtherStudents/{classId:guid}")]
     [Authorize(Policy = Policies.StudentOnly)]
     public async Task<IActionResult> GetOtherStudents(Guid classId, CancellationToken cancellationToken = default)
     {
         var studentNames = await studentService.GetOtherStudentNamesByClassIdAsync(classId, cancellationToken);
         return Ok(studentNames);
+    }
+
+    [HttpGet("getClasses/{studentId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> GetClasses(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        var classes = await studentService.GetClassesByStudentIdAsync(studentId, cancellationToken);
+        return Ok(classes);
     }
 }

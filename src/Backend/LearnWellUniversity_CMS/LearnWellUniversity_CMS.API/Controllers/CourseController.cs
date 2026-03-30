@@ -66,4 +66,20 @@ public class CourseController(ICourseService courseService) : ControllerBase
         var students = await courseService.GetStudentsInCourseAsync(courseId, cancellationToken);
         return Ok(students);
     }
+
+    [HttpGet("getClasses/{courseId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> GetClasses(Guid courseId, CancellationToken cancellationToken = default)
+    {
+        var classes = await courseService.GetClassesInCourseAsync(courseId, cancellationToken);
+        return Ok(classes);
+    }
+
+    [HttpPost("addRemoveClasses/{courseId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> AddRemoveClasses(Guid courseId, [FromBody] AddRemoveClassessRequest request, CancellationToken cancellationToken = default)
+    {
+        await courseService.AddRemoveClassesInCourseAsync(courseId, request, cancellationToken);
+        return NoContent();
+    }
 }

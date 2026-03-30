@@ -1,12 +1,13 @@
-﻿using LearnWellUniversity_CMS.Application.Services;
+﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.Services;
 using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Shared.Constants;
 
 namespace LearnWellUniversity_CMS.Infrastructure.DataAccess;
 
-public class DataSeeder
+public class DataSeeder(IUserService userService, IRoleService roleService) : IDataSeeder
 {
-    public static async Task SeedAsync(IUserService userService, IRoleService roleService)
+    public async Task SeedAsync()
     {
         foreach (var role in new[] { Roles.Staff, Roles.Student })
         {

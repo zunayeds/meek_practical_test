@@ -71,4 +71,49 @@ public class CourseRepository(AppDbContext dbContext, IMappingHelper mappingHelp
             }
         }
     }
+
+    public async Task AddRemoveClassesAsync(Guid courseId, List<Guid> addClassIds, List<Guid> removeClassIds, CancellationToken cancellationToken = default)
+    {
+        if (addClassIds.Count + removeClassIds.Count == 0) return;
+
+        if (removeClassIds.Count > 0)
+        {
+            removeClassIds = removeClassIds.Distinct().ToList();
+            await _dbContext.CourseClasses
+                .Where(w => removeClassIds.Contains(w.ClassId))
+                .ExecuteDeleteAsync(cancellationToken);
+        }
+
+        if (addClassIds.Count > 0)
+        {
+            addClassIds = addClassIds.Distinct().ToList();
+
+            var existingClassIds = await _dbContext.CourseClasses
+                .Where(sc => sc.CourseId == courseId && addClassIds.Contains(sc.ClassId))
+                .Select(sc => sc.ClassId)
+                .ToListAsync(cancellationToken);
+
+            var existingSet = existingClassIds.ToHashSet();
+
+            var newClassIds = addClassIds
+                .Where(id => !existingSet.Contains(id))
+                .ToList();
+
+            if (newClassIds.Count > 0)
+            {
+                if (await _dbContext.Classes.CountAsync(w => newClassIds.Contains(w.ClassId)) < newClassIds.Count)
+                {
+                    throw new NotFoundException("Some of the class id(s) are not valid");
+                }
+
+                var newClasses = newClassIds
+                    .Select(classId => new CourseClass
+                    {
+                        CourseId = courseId,
+                        ClassId = classId
+                    });
+                await _dbContext.CourseClasses.AddRangeAsync(newClasses, cancellationToken);
+            }
+        }
+    }
 }

@@ -18,6 +18,7 @@ public interface IClassService
     Task DeleteClassByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddRemoveStudentsInClassAsync(Guid classId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default);
     Task<List<StudentResponseBase>> GetStudentsInClassAsync(Guid classId, CancellationToken cancellationToken = default);
+    Task<List<CourseResponseBase>> GetCoursesAssociatedWithClassAsync(Guid classId, CancellationToken cancellationToken = default);
 }
 
 public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMappingHelper mappingHelper) : IClassService
@@ -67,6 +68,8 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
 
     public async Task<ClassResponse> UpdateClassAsync(Guid id, CreateUpdateClassRequest request, CancellationToken cancellationToken = default)
     {
+        await ValidateClassExistanceAsync(id);
+
         var doesExist = await _classes.DoesExistAsync(f => f.ClassId != id && f.Name == request.Name, cancellationToken);
         if (doesExist) throw new AlreadyExistException(ErrorMessageGenerator.AlreadyExistErrorMessage<Class>("name"));
 
@@ -78,12 +81,14 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
 
     public async Task DeleteClassByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        await ValidateClassExistanceAsync(id);
         await _classes.DeleteByFilterAsync(f => f.ClassId == id, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public async Task AddRemoveStudentsInClassAsync(Guid classId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default)
     {
+        await ValidateClassExistanceAsync(classId);
         await unitOfWork.BeginTransactionAsync(cancellationToken);
         await _classes.AddRemoveStudentsAsync(classId, request.AddStudentIds, request.RemoveStudentIds, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -92,7 +97,23 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
 
     public async Task<List<StudentResponseBase>> GetStudentsInClassAsync(Guid classId, CancellationToken cancellationToken = default)
     {
+        await ValidateClassExistanceAsync(classId);
         var filter = PredicateBuilder.New<Student>(f => f.StudentClasses.Any(w => w.ClassId == classId));
         return await unitOfWork.Students.GetByFiltersAsync<StudentResponseBase>(filter, cancellationToken: cancellationToken);
+    }
+
+    public async Task<List<CourseResponseBase>> GetCoursesAssociatedWithClassAsync(Guid classId, CancellationToken cancellationToken = default)
+    {
+        await ValidateClassExistanceAsync(classId);
+        var filter = PredicateBuilder.New<Course>(f => f.CourseClasses.Any(w => w.ClassId == classId));
+        return await unitOfWork.Courses.GetByFiltersAsync<CourseResponseBase>(filter, cancellationToken: cancellationToken);
+    }
+
+    private async Task ValidateClassExistanceAsync(Guid classId)
+    {
+        if (!await _classes.DoesExistAsync(f => f.ClassId == classId))
+        {
+            throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Class>());
+        }
     }
 }

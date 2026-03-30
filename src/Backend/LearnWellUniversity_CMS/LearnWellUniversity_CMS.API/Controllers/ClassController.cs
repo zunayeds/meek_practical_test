@@ -66,4 +66,12 @@ public class ClassController(IClassService classService) : ControllerBase
         var students = await classService.GetStudentsInClassAsync(classId, cancellationToken);
         return Ok(students);
     }
+
+    [HttpGet("getCourses/{classId:guid}")]
+    [Authorize(Policy = Policies.StaffOnly)]
+    public async Task<IActionResult> GetCourses(Guid classId, CancellationToken cancellationToken = default)
+    {
+        var courses = await classService.GetCoursesAssociatedWithClassAsync(classId, cancellationToken);
+        return Ok(courses);
+    }
 }
