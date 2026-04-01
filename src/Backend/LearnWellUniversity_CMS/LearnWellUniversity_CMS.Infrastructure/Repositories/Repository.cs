@@ -46,6 +46,11 @@ public class Repository<T>(AppDbContext dbContext, IMappingHelper mappingHelper)
         await _dbSet.AddAsync(entity, cancellationToken);
     }
 
+    public async Task AddRangeAsync(List<T> entities, CancellationToken cancellationToken = default)
+    {
+        await _dbSet.AddRangeAsync(entities, cancellationToken);
+    }
+
     public async Task<T> Update<TUpdate>(Guid Id, TUpdate update, CancellationToken cancellationToken = default) where TUpdate : class
     {
         var entity = await _dbSet.FindAsync([Id], cancellationToken) ?? throw new ObjectNotFoundException();

@@ -1,4 +1,6 @@
-﻿using LearnWellUniversity_CMS.Domain.Models;
+﻿using AutoMapper;
+using LearnWellUniversity_CMS.Application.DTOs.Requests;
+using LearnWellUniversity_CMS.Domain.Models;
 using LearnWellUniversity_CMS.Shared.Exceptions;
 using LearnWellUniversity_CMS.Shared.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +11,11 @@ namespace LearnWellUniversity_CMS.Application.Services;
 public interface IUserService
 {
     Task<(Guid Id, string Password)> CreateWithRoleAsync(ApplicationUser user, string role, string? password, bool throwErrorIfExists = false);
+    Task<(Guid Id, string Password)> CreateWithRoleAsync(CreateUpdateUserRequest request, string role);
+    Task DeleteUserByIdAsync (Guid userId);
 }
 
-public class UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger) : IUserService
+public class UserService(UserManager<ApplicationUser> userManager, IMapper mapper, ILogger<UserService> logger) : IUserService
 {
     public async Task<(Guid Id, string Password)> CreateWithRoleAsync(ApplicationUser user, string role, string? password, bool throwErrorIfExists = false)
     {
@@ -44,5 +48,20 @@ public class UserService(UserManager<ApplicationUser> userManager, ILogger<UserS
         }
 
         return (user.Id, password ?? string.Empty);
+    }
+
+    public async Task<(Guid Id, string Password)> CreateWithRoleAsync(CreateUpdateUserRequest request, string role)
+    {
+        var user = mapper.Map<ApplicationUser>(request);
+        return await CreateWithRoleAsync(user, role, null, true);
+    }
+
+    public async Task DeleteUserByIdAsync(Guid userId)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is not null)
+        {
+            await userManager.DeleteAsync(user);
+        }
     }
 }

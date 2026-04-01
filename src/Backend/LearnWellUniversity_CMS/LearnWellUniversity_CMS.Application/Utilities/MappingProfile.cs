@@ -26,5 +26,7 @@ public class MappingProfile : Profile
         CreateMap<CreateUpdateStudentRequest, Student>();
         CreateMap<Student, CreateStudentResponse>()
             .ForMember(dest => dest.Id, src => src.MapFrom(s => s.StudentId));
+
+        CreateMap<CreateUpdateUserRequest, ApplicationUser>();
     }
 }

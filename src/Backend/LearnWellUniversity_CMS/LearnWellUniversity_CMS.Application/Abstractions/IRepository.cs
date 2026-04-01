@@ -10,6 +10,7 @@ public interface IRepository<T> where T : class
     IQueryable<T> GetByFiltersAsQueryable(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null);
     Task<List<TResponseType>> GetByFiltersAsync<TResponseType>(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null, CancellationToken cancellationToken = default) where TResponseType : class;
     Task AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task AddRangeAsync(List<T> entities, CancellationToken cancellationToken = default);
     Task<T> Update<TUpdate>(Guid Id, TUpdate update, CancellationToken cancellationToken = default) where TUpdate : class;
     Task DeleteByFilterAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default);
     Task<bool> DoesExistAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default);

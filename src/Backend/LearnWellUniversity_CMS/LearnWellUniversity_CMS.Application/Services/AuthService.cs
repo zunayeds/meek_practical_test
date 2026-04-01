@@ -44,8 +44,8 @@ public class AuthService(UserManager<ApplicationUser> userManager, IConfiguratio
         if (roles.Contains(Roles.Student))
         {
             var studentId = await unitOfWork.Students.GetIdByUserIdAsync(user.Id, cancellationToken);
-            if (!studentId.Equals(Guid.Empty))
-                claims.Add(new Claim(AdditionalClaims.StudentId, studentId.ToString()));
+            if (studentId is not null)
+                claims.Add(new Claim(AdditionalClaims.StudentId, studentId.Value.ToString()));
         }
 
         var token = BuildToken(claims, out var expiresAt);

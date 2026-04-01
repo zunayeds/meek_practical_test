@@ -21,6 +21,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser c
     {
         base.OnModelCreating(modelBuilder);
 
+        #region Entity Configurations
+        
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
             entity.HasOne(u => u.CreatedByUser)
@@ -89,7 +91,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser c
         modelBuilder.Entity<StudentCourse>(entity =>
         {
             entity.HasIndex(sc => new { sc.StudentId, sc.CourseId }).IsUnique();
-            entity.HasOne(sc => sc.Student).WithMany(s => s.StudentCourses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(sc => sc.Student).WithMany(s => s.StudentCourses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(sc => sc.Course).WithMany(c => c.StudentCourses).HasForeignKey(sc => sc.CourseId);
             entity.HasOne(sc => sc.AssignedByUser).WithMany().HasForeignKey(sc => sc.AssignedBy).OnDelete(DeleteBehavior.Restrict);
         });
@@ -97,10 +99,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser c
         modelBuilder.Entity<StudentClass>(entity =>
         {
             entity.HasIndex(sc => new { sc.StudentId, sc.ClassId }).IsUnique();
-            entity.HasOne(sc => sc.Student).WithMany(s => s.StudentClasses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(sc => sc.Student).WithMany(s => s.StudentClasses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(sc => sc.Class).WithMany(c => c.StudentClasses).HasForeignKey(sc => sc.ClassId);
             entity.HasOne(sc => sc.AssignedByUser).WithMany().HasForeignKey(sc => sc.AssignedBy).OnDelete(DeleteBehavior.Restrict);
         });
+
+        #endregion
+
+        modelBuilder.SeedInitialData();
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -111,6 +117,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser c
 
     private void ManageTrackableEntities()
     {
+        if (currentUser.UserId.Equals(Guid.Empty)) return;
+
         var itemsWithAuditTrail = ChangeTracker.Entries<IAuditTrailBase>()
             .Where(w => w.State == EntityState.Added || w.State == EntityState.Modified);
 

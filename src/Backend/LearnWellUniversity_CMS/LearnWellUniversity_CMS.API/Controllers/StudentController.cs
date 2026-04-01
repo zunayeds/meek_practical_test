@@ -67,9 +67,17 @@ public class StudentController(IStudentService studentService, ILogger<StudentCo
 
     [HttpGet("getClasses/{studentId:guid}")]
     [Authorize(Policy = Policies.StaffOnly)]
-    public async Task<IActionResult> GetClasses(Guid studentId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetClassesByStudentId(Guid studentId, CancellationToken cancellationToken = default)
     {
         var classes = await studentService.GetClassesByStudentIdAsync(studentId, cancellationToken);
+        return Ok(classes);
+    }
+
+    [HttpGet("getClasses")]
+    [Authorize(Policy = Policies.StudentOnly)]
+    public async Task<IActionResult> GetClasses(CancellationToken cancellationToken = default)
+    {
+        var classes = await studentService.GetClassesAsync(cancellationToken);
         return Ok(classes);
     }
 }

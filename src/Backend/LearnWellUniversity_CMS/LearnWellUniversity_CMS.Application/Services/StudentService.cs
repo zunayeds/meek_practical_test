@@ -20,6 +20,7 @@ public interface IStudentService
     Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
     Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
+    Task<List<StudentClassResponse>> GetClassesAsync(CancellationToken cancellationToken = default);
 }
 
 public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper, ILogger<StudentService> logger) : IStudentService
@@ -129,8 +130,16 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
     public async Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await ValidateStudentExistanceAsync(id);
+
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
+
+        var userId = await _students.GetUserIdAsync(id, cancellationToken);
         await _students.DeleteByFilterAsync(f => f.StudentId == id, cancellationToken);
+        logger.LogInformation("Deleting user for student with id {id}", id);
+        await userService.DeleteUserByIdAsync(userId);
+        logger.LogWarning("Deleted user for student with id {id}", id);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
     }
 
     public async Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default)
@@ -140,6 +149,13 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
 
     public async Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
+        await ValidateStudentExistanceAsync(studentId);
+        return await _students.GetClassesAsync(studentId, cancellationToken);
+    }
+
+    public async Task<List<StudentClassResponse>> GetClassesAsync(CancellationToken cancellationToken = default)
+    {
+        var studentId = currentUser.StudentId ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
         await ValidateStudentExistanceAsync(studentId);
         return await _students.GetClassesAsync(studentId, cancellationToken);
     }
