@@ -6,4 +6,7 @@
     <Project Path="LearnWellUniversity_CMS.Infrastructure/LearnWellUniversity_CMS.Infrastructure.csproj" Id="417d8938-7f80-43b8-8b14-37cd75cc69aa" />
     <Project Path="LearnWellUniversity_CMS.Shared/LearnWellUniversity_CMS.Shared.csproj" Id="c5f95b4a-349d-43e9-9212-e98636529a4d" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="LearnWellUniversity_CMS.Tests/LearnWellUniversity_CMS.Tests.csproj" Id="00a5f16f-87ab-456c-a66b-6bf0a8161536" />
+  </Folder>
 </Solution>

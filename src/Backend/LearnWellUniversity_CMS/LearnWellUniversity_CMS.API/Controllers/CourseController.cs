@@ -9,7 +9,7 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class CourseController(ICourseService courseService, ILogger<ClassController> logger) : ControllerBase
+public class CourseController(ICourseService courseService, ILogger<CourseController> logger) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = Policies.StaffOnly)]
