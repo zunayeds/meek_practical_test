@@ -19,23 +19,29 @@ public class AuthControllerTests
     [Fact]
     public async Task AuthenticateAsync_ValidCredentials_ReturnsOkWithToken()
     {
+        // Arrange
         var request = new AuthenticationRequest { UserName = "admin@learnwell.edu", Password = "Admin@123" };
         _mockAuthService.Setup(s => s.AuthenticateAsync(request, default))
                     .ReturnsAsync(new AuthenticationResponse { Token = "jwt.token", Email = "admin@learnwell.edu" });
 
+        // Act
         var result = await _authController.AuthenticateAsync(request);
 
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.NotEmpty(((AuthenticationResponse)ok.Value!).Token);
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.NotEmpty(((AuthenticationResponse)okResult.Value!).Token);
     }
 
     [Fact]
     public async Task AuthenticateAsync_InvalidCredentials_ReturnsUnauthorized()
     {
+        // Arrange
         var request = new AuthenticationRequest { UserName = "john@outlook.com", Password = "wrongPass" };
 
+        // Act
         _mockAuthService.Setup(s => s.AuthenticateAsync(request, default)).ReturnsAsync((AuthenticationResponse?)null);
 
+        // Assert
         Assert.IsType<UnauthorizedObjectResult>(await _authController.AuthenticateAsync(request));
     }
 }

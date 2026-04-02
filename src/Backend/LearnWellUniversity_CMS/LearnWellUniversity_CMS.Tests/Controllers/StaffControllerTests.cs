@@ -28,14 +28,17 @@ public class StaffControllerTests
     [Fact]
     public async Task AddStaff_ValidRequest_ReturnsOkWithIdAndPassword()
     {
+        // Arrange
         var expectedId = Guid.NewGuid();
         _mockUserService.Setup(s => s.CreateWithRoleAsync(ValidUserCreateUpdateRequest, Roles.Staff))
                     .ReturnsAsync((expectedId, "Generated@Pass1"));
 
+        // Act
         var result = await _staffController.AddStaffAsync(ValidUserCreateUpdateRequest);
 
-        var ok = Assert.IsType<OkObjectResult>(result);
-        var (id, password) = ((Guid, string))ok.Value!;
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var (id, password) = ((Guid, string))okResult.Value!;
         Assert.Equal(expectedId, id);
         Assert.NotEmpty(password);
     }
@@ -43,10 +46,13 @@ public class StaffControllerTests
     [Fact]
     public async Task AddStaff_AlwaysPassesStaffRoleToService()
     {
+        // Arrange
         _mockUserService.Setup(s => s.CreateWithRoleAsync(ValidUserCreateUpdateRequest, Roles.Staff)).ReturnsAsync((Guid.NewGuid(), "Generated@Pass1"));
 
+        // Act
         await _staffController.AddStaffAsync(ValidUserCreateUpdateRequest);
 
+        // Assert
         _mockUserService.Verify(s => s.CreateWithRoleAsync(ValidUserCreateUpdateRequest, Roles.Staff), Times.Once);
         _mockUserService.Verify(s => s.CreateWithRoleAsync(It.IsAny<CreateUpdateUserRequest>(), Roles.Student), Times.Never);
     }
@@ -54,9 +60,11 @@ public class StaffControllerTests
     [Fact]
     public async Task AddStaff_DuplicateEmail_PropagatesAlreadyExistException()
     {
+        // Arrange
         _mockUserService.Setup(s => s.CreateWithRoleAsync(It.IsAny<CreateUpdateUserRequest>(), Roles.Staff))
                     .ThrowsAsync(new AlreadyExistException("exists"));
-        await Assert.ThrowsAsync<AlreadyExistException>(() =>
-            _staffController.AddStaffAsync(ValidUserCreateUpdateRequest));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AlreadyExistException>(() => _staffController.AddStaffAsync(ValidUserCreateUpdateRequest));
     }
 }

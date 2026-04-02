@@ -12,11 +12,11 @@
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
-        "ASPNETCORE_HTTP_PORTS": "8080",
+        "ASPNETCORE_HTTP_PORTS": "5230",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "publishAllPorts": false,
-      "httpPort": 8080,
+      "httpPort": 5230,
       "useSSL": false
     },
     "IIS Express": {

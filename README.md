@@ -9,9 +9,10 @@ A Course Management System for Learn Well University, comprising a .NET 9 Web AP
 - **.NET 9**
 - **Entity Framework Core 9**
 - **Swagger (Open API)**
-- **PostgreSQL (latest)**
+- **PostgreSQL (DB)**
 - **JWT (Bearer Authentication)**
 - **Serilog + Seq (Logging)**
+- **xUnit (Testing)**
 
 ## Prerequisites
 
@@ -56,6 +57,12 @@ The API will automatically apply EF migrations and seed a default admin account 
 |---------|-------|-----------|
 | API (Staff) | admin@learnwell.edu | Admin@123 |
 | SEQ ([http://localhost:8081](http://localhost:8081)) | admin | Admin@123 |
+
+## Running Tests
+
+```bash
+dotnet test
+```
 
 ## ER Diagram
 

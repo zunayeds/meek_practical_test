@@ -29,9 +29,14 @@ public class StudentControllerTests
     [Fact]
     public async Task Create_ValidRequest_ReturnsOkWithPassword()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.CreateAsync(It.IsAny<CreateUpdateStudentRequest>(), default))
                     .ReturnsAsync(new CreateStudentResponse { Id = Guid.NewGuid(), Password = "Generated@Pass1" });
+
+        // Act
         var result = await _studentController.Create(ValidStudentCreateUpdateRequest);
+
+        // Assert
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.NotEmpty(((CreateStudentResponse)ok.Value!).Password);
     }
@@ -39,89 +44,143 @@ public class StudentControllerTests
     [Fact]
     public async Task Create_DuplicateEmailOrPhone_PropagatesAlreadyExistException()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.CreateAsync(It.IsAny<CreateUpdateStudentRequest>(), default))
                     .ThrowsAsync(new AlreadyExistException("exists"));
+
+        // Act & Assert
         await Assert.ThrowsAsync<AlreadyExistException>(() => _studentController.Create(ValidStudentCreateUpdateRequest));
     }
 
     [Fact]
     public async Task GetAll_ReturnsOkWithList()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.GetStudentsAsync(It.IsAny<GetStudentByFiltersRequest>(), default))
                     .ReturnsAsync([new StudentResponseBase { FirstName = "Alice" }]);
-        Assert.IsType<OkObjectResult>(await _studentController.GetAll(new GetStudentByFiltersRequest()));
+
+        // Act
+        var result = await _studentController.GetAll(new GetStudentByFiltersRequest());
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
     public async Task GetById_ExistingId_ReturnsOk()
     {
+        // Arrange
         var id = Guid.NewGuid();
         _mockStudentService.Setup(s => s.GetByStudentIdAsync(id, default)).ReturnsAsync(new StudentResponse { StudentId = id });
-        Assert.IsType<OkObjectResult>(await _studentController.GetById(id));
+
+        // Act
+        var result = await _studentController.GetById(id);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
     public async Task GetById_StudentNotFound_PropagatesNotFoundException()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.GetByStudentIdAsync(It.IsAny<Guid>(), default))
                     .ThrowsAsync(new NotFoundException("not found"));
+
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _studentController.GetById(Guid.NewGuid()));
     }
 
     [Fact]
     public async Task Update_ValidRequest_ReturnsOk()
     {
+        // Arrange
         var id = Guid.NewGuid();
         _mockStudentService.Setup(s => s.UpdateStudentAsync(id, It.IsAny<CreateUpdateStudentRequest>(), default))
                     .ReturnsAsync(new StudentResponse { StudentId = id });
-        Assert.IsType<OkObjectResult>(await _studentController.Update(id, ValidStudentCreateUpdateRequest));
+
+        // Act
+        var result = await _studentController.Update(id, ValidStudentCreateUpdateRequest);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
     public async Task Update_StudentNotFound_PropagatesNotFoundException()
     {
+        // Arrange
         var id = Guid.NewGuid();
         _mockStudentService.Setup(s => s.UpdateStudentAsync(id, It.IsAny<CreateUpdateStudentRequest>(), default))
                     .ThrowsAsync(new NotFoundException("not found"));
+
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _studentController.Update(id, ValidStudentCreateUpdateRequest));
     }
 
     [Fact]
     public async Task Delete_ExistingId_ReturnsNoContent()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.DeleteStudentByIdAsync(It.IsAny<Guid>(), default)).Returns(Task.CompletedTask);
-        Assert.IsType<NoContentResult>(await _studentController.Delete(Guid.NewGuid()));
+
+        // Act
+        var result = await _studentController.Delete(Guid.NewGuid());
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
     public async Task Delete_StudentNotFound_PropagatesNotFoundException()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.DeleteStudentByIdAsync(It.IsAny<Guid>(), default))
                     .ThrowsAsync(new NotFoundException("not found"));
+
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _studentController.Delete(Guid.NewGuid()));
     }
 
     [Fact]
     public async Task GetOtherStudents_ReturnsOkWithNameList()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.GetOtherStudentNamesByClassIdAsync(It.IsAny<Guid>(), default))
                     .ReturnsAsync(["Alice Smith"]);
-        Assert.IsType<OkObjectResult>(await _studentController.GetOtherStudents(Guid.NewGuid()));
+
+        // Act
+        var result = await _studentController.GetOtherStudents(Guid.NewGuid());
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
     public async Task GetClassesByStudentId_ReturnsOk()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.GetClassesByStudentIdAsync(It.IsAny<Guid>(), default))
-                    .ReturnsAsync([new StudentClassResponse { Name = "Math-101" }]);
-        Assert.IsType<OkObjectResult>(await _studentController.GetClassesByStudentId(Guid.NewGuid()));
+                    .ReturnsAsync([new StudentClassResponse { Name = "Math 101" }]);
+
+        // Act
+        var result = await _studentController.GetClassesByStudentId(Guid.NewGuid());
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
     public async Task GetClasses_ReturnsOk()
     {
+        // Arrange
         _mockStudentService.Setup(s => s.GetClassesAsync(default))
-                    .ReturnsAsync([new StudentClassResponse { Name = "Science-101" }]);
-        Assert.IsType<OkObjectResult>(await _studentController.GetClasses());
+                    .ReturnsAsync([new StudentClassResponse { Name = "Science 101" }]);
+
+        // Act
+        var result = await _studentController.GetClasses();
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
     }
 }
