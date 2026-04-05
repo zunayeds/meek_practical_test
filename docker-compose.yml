@@ -51,6 +51,17 @@ services:
     networks:
       - learnwell_cms_network
 
+  ui:
+    build:
+      context: ./src/Frontend/learnwell_cms_ui
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - learnwell_cms_network
+
 networks:
   learnwell_cms_network:
     driver: bridge

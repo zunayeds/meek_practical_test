@@ -416,3 +416,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+src/Frontend/learnwell_cms_ui/.vscode

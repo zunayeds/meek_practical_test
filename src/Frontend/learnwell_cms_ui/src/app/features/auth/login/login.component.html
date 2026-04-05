@@ -1,0 +1,48 @@
+<div class="login-wrapper">
+  <p-card styleClass="login-card">
+    <ng-template pTemplate="header">
+      <div class="login-header">
+        <i class="pi pi-graduation-cap login-icon"></i>
+        <h2 class="login-title">Learn Well University</h2>
+        <p class="login-subtitle">Course Management System</p>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      @if (errorMessage()) {
+        <p-message severity="error" [text]="errorMessage()" styleClass="w-full mb-4" />
+      }
+
+      <div class="field">
+        <label for="userName">Email</label>
+        <input
+          id="userName"
+          type="text"
+          pInputText
+          formControlName="userName"
+          class="w-full"
+          placeholder="Enter your username" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+          placeholder="Enter your password" />
+      </div>
+
+      <p-button
+        type="submit"
+        label="Sign In"
+        icon="pi pi-sign-in"
+        styleClass="w-full mt-2"
+        [loading]="loading()"
+        [disabled]="form.invalid" />
+    </form>
+  </p-card>
+</div>
