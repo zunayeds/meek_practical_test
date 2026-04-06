@@ -39,7 +39,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -64,7 +64,8 @@
               "buildTarget": "learnwell_cms_ui:build:production"
             },
             "development": {
-              "buildTarget": "learnwell_cms_ui:build:development"
+              "buildTarget": "learnwell_cms_ui:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

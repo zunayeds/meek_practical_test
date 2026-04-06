@@ -1,0 +1,36 @@
+<app-list-page-layout
+  [title]="'Courses'"
+  [items]="courses()"
+  [loading]="loading()"
+  [totalRecords]="totalRecords()"
+  [pageSize]="pageSize"
+  [columnCount]="3"
+  [emptyMessage]="'No courses found.'"
+  (lazyLoad)="onLazyLoad($event)"
+  (search)="search()"
+  (clearFilters)="clearFilters()">
+
+  <div list-filters class="filter-bar-content">
+    <input
+      pInputText
+      [(ngModel)]="nameFilter"
+      placeholder="Search by name..."
+      (keyup.enter)="search()" />
+  </div>
+
+  <ng-template list-header>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template listBody let-course>
+    <tr>
+      <td>{{ course.name }}</td>
+      <td>{{ course.description }}</td>
+      <td>...</td>
+    </tr>
+  </ng-template>
+</app-list-page-layout>

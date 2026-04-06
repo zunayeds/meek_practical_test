@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -13,6 +14,9 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:citext", ",,");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -181,7 +185,7 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                 columns: table => new
                 {
                     ClassId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "citext", maxLength: 20, nullable: false),
                     Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),
@@ -210,7 +214,7 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                 columns: table => new
                 {
                     CourseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Name = table.Column<string>(type: "citext", maxLength: 30, nullable: false),
                     Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),

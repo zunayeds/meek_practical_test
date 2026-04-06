@@ -1,0 +1,39 @@
+<p-toast />
+
+<div class="page-header">
+  <h2 class="page-title">{{ title() }}</h2>
+</div>
+
+<div class="filter-bar">
+  <ng-content select="[list-filters]"></ng-content>
+  <p-button label="Search" icon="pi pi-search" (onClick)="search.emit()" />
+  <p-button label="Clear" icon="pi pi-times" severity="secondary" (onClick)="clearFilters.emit()" />
+</div>
+
+<p-table
+  [value]="items()"
+  [loading]="loading()"
+  [lazy]="true"
+  [paginator]="true"
+  [rows]="pageSize()"
+  [totalRecords]="totalRecords()"
+  (onLazyLoad)="lazyLoad.emit($event)"
+  [stripedRows]="true"
+  styleClass="p-datatable-sm">
+
+  <ng-template pTemplate="header">
+    <ng-content select="[list-header]"></ng-content>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData>
+    <ng-container
+      *ngTemplateOutlet="bodyTemplate()?.template ?? null; context: { $implicit: rowData }">
+    </ng-container>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columnCount()">{{ emptyMessage() }}</td>
+    </tr>
+  </ng-template>
+</p-table>

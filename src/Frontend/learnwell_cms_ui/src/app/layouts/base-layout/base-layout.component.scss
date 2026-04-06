@@ -1,0 +1,22 @@
+@mixin base-menubar {
+  border: none;
+  border-radius: 0;
+  color: #fff;
+
+  .p-menubar-item-link {
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    &.p-menubar-item-link-active {
+      background: #fff;
+      font-weight: 600;
+    }
+  }
+}

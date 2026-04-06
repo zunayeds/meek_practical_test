@@ -1,0 +1,27 @@
+<div class="flex flex-column min-h-screen">
+  <p-menubar [model]="navItems()" [styleClass]="navbarClass()">
+    <ng-template pTemplate="start">
+      <span class="flex align-items-center gap-2 font-bold text-xl mr-4">
+        <i class="pi pi-graduation-cap"></i>
+        Learn Well University - CMS
+      </span>
+    </ng-template>
+    <ng-template pTemplate="item" let-item>
+      <a [routerLink]="item.routerLink" routerLinkActive="nav-active" class="p-menubar-item-link">
+        <span class="p-menubar-item-label">{{ item.label }}</span>
+      </a>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <div class="flex align-items-center gap-3">
+        <span class="flex align-items-center gap-2 text-sm">
+          <i class="pi pi-user"></i>
+          {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}
+        </span>
+        <p-button label="Logout" icon="pi pi-sign-out" severity="secondary" size="small" (onClick)="logout()" />
+      </div>
+    </ng-template>
+  </p-menubar>
+  <main class="flex-1 p-4">
+    <router-outlet />
+  </main>
+</div>

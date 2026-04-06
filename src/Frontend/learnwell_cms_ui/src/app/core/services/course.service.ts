@@ -1,0 +1,18 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environment';
+import { CourseBase } from '../models/course.model';
+
+@Injectable({ providedIn: 'root' })
+export class CourseService {
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/course`;
+
+  getAll(name: string, page: number, pageSize: number) {
+    const params = new HttpParams()
+      .set('name', name)
+      .set('page', page)
+      .set('pageSize', pageSize);
+    return this.http.get<CourseBase[]>(this.base, { params });
+  }
+}

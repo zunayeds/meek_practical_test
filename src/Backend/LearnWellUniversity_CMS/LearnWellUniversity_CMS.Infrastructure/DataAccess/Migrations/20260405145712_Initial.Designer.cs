@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260401173929_Initial")]
+    [Migration("20260405145712_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -23,6 +23,7 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                 .HasAnnotation("ProductVersion", "9.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "citext");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("LearnWellUniversity_CMS.Domain.Models.ApplicationUser", b =>
@@ -181,7 +182,7 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("citext");
 
                     b.HasKey("ClassId");
 
@@ -254,7 +255,7 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("citext");
 
                     b.HasKey("CourseId");
 
