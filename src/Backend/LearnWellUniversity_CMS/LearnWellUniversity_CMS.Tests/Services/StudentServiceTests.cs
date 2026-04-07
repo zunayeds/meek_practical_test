@@ -213,7 +213,11 @@ public class StudentServiceTests
     public async Task GetStudentsAsync_NoFilter_ReturnsAllStudents()
     {
         // Arrange
-        var expected = new List<StudentResponseBase> { new() { FirstName = "Dave" } };
+        var expected = new PaginatedResponse<StudentResponseBase>
+        {
+            TotalRecords = 1,
+            Records = [new() { FirstName = "Dave" }]
+        };
         _mockStudentRepository.Setup(r => r.GetByFiltersAsync<StudentResponseBase>(
             It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
             .ReturnsAsync(expected);
@@ -235,8 +239,11 @@ public class StudentServiceTests
             EmailAddress = "dave",
             PhoneNumber = "123"
         };
-        var expected = new List<StudentResponseBase>();
-
+        var expected = new PaginatedResponse<StudentResponseBase>
+        {
+            TotalRecords = 0,
+            Records = []
+        };
         _mockStudentRepository.Setup(r => r.GetByFiltersAsync<StudentResponseBase>(
             It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
             .ReturnsAsync(expected);

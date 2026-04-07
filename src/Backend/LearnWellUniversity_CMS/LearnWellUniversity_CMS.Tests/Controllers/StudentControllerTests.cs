@@ -17,7 +17,7 @@ public class StudentControllerTests
     public StudentControllerTests()
         => _studentController = new StudentController(_mockStudentService.Object, new Mock<ILogger<StudentController>>().Object);
 
-    private CreateUpdateStudentRequest ValidStudentCreateUpdateRequest = new()
+    private readonly CreateUpdateStudentRequest ValidStudentCreateUpdateRequest = new()
     {
         FirstName = "Alice",
         LastName = "Smith",
@@ -57,7 +57,11 @@ public class StudentControllerTests
     {
         // Arrange
         _mockStudentService.Setup(s => s.GetStudentsAsync(It.IsAny<GetStudentByFiltersRequest>(), default))
-                    .ReturnsAsync([new StudentResponseBase { FirstName = "Alice" }]);
+                    .ReturnsAsync(new PaginatedResponse<StudentResponseBase>
+                    {
+                        TotalRecords = 1,
+                        Records = [new StudentResponseBase { FirstName = "Alice" }]
+                    });
 
         // Act
         var result = await _studentController.GetAll(new GetStudentByFiltersRequest());

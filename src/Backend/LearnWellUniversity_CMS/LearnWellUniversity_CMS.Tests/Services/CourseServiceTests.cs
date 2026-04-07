@@ -113,7 +113,10 @@ public class CourseServiceTests
     {
         // Arrange
         _mockCurrentUser.Setup(u => u.StudentId).Returns((Guid?)null);
-        var expected = new List<CourseResponseBase> { new() { Name = "Physics" } };
+        var expected = new PaginatedResponse<CourseResponseBase>
+        {  TotalRecords = 1,
+           Records = [new() { Name = "Physics" }]
+        };
         _mockCourseRepository.Setup(r => r.GetByFiltersAsync<CourseResponseBase>(
             It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
             .ReturnsAsync(expected);
@@ -131,7 +134,11 @@ public class CourseServiceTests
         // Arrange
         var studentId = Guid.NewGuid();
         _mockCurrentUser.Setup(u => u.StudentId).Returns(studentId);
-        var expected = new List<CourseResponseBase> { new() { Name = "Math" } };
+        var expected = new PaginatedResponse<CourseResponseBase>
+        {
+            TotalRecords = 1,
+            Records = [new() { Name = "Math" }]
+        };
         _mockCourseRepository.Setup(r => r.GetByFiltersAsync<CourseResponseBase>(
             It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
             .ReturnsAsync(expected);
@@ -308,7 +315,7 @@ public class CourseServiceTests
         _mockCourseRepository.Setup(r => r.DoesExistAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>>(), default))
                        .ReturnsAsync(true);
         _mockStudentRepository.Setup(r => r.GetByFiltersAsync<StudentResponseBase>(
-            It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
+            It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), default))
             .ReturnsAsync(students);
 
         // Act
@@ -343,7 +350,7 @@ public class CourseServiceTests
         _mockCourseRepository.Setup(r => r.DoesExistAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Course, bool>>>(), default))
                        .ReturnsAsync(true);
         _mockClassRepository.Setup(r => r.GetByFiltersAsync<ClassResponseBase>(
-            It.IsAny<System.Linq.Expressions.Expression<Func<Class, bool>>>(), It.IsAny<int?>(), It.IsAny<int?>(), default))
+            It.IsAny<System.Linq.Expressions.Expression<Func<Class, bool>>>(), default))
             .ReturnsAsync(classes);
 
         // Act

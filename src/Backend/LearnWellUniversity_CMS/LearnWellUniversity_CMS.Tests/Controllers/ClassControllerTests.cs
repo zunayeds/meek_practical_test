@@ -47,7 +47,11 @@ public class ClassControllerTests
     {
         // Arrange
         _mockClassService.Setup(s => s.GetClasssAsync(It.IsAny<GetByFiltersBaseRequest>(), default))
-                    .ReturnsAsync([new ClassResponseBase { Name = "Math 101" }]);
+                    .ReturnsAsync(new PaginatedResponse<ClassResponseBase>
+                    {
+                        TotalRecords = 1,
+                        Records = [new ClassResponseBase { Name = "Math 101" }]
+                    });
 
         // Act
         var result = await _classController.GetAll(new GetByFiltersBaseRequest());

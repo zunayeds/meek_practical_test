@@ -48,13 +48,9 @@ export class CourseListComponent {
   loadCourses(page: number): void {
     this.loading.set(true);
     this.courseService.getAll(this.nameFilter, page, PAGE_SIZE).subscribe({
-      next: items => {
-        this.courses.set(items);
-        this.totalRecords.set(
-          items.length === PAGE_SIZE
-            ? page * PAGE_SIZE + 1
-            : (page - 1) * PAGE_SIZE + items.length
-        );
+      next: result => {
+        this.courses.set(result.records);
+        this.totalRecords.set(result.totalRecords);
         this.loading.set(false);
       },
       error: () => {

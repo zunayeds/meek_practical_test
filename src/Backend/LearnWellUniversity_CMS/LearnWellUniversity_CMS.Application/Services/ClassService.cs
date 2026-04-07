@@ -13,7 +13,7 @@ public interface IClassService
 {
     Task<CreatedEntityResponse> CreateAsync(CreateClassRequest request, CancellationToken cancellationToken = default);
     Task<ClassResponse> GetByClassIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<List<ClassResponseBase>> GetClasssAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
+    Task<PaginatedResponse<ClassResponseBase>> GetClasssAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
     Task<ClassResponse> UpdateClassAsync(Guid id, CreateUpdateClassRequest request, CancellationToken cancellationToken = default);
     Task DeleteClassByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddRemoveStudentsInClassAsync(Guid classId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default);
@@ -35,8 +35,8 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
             Name = request.Name,
             Description = request.Description,
         };
-        await _classes.AddAsync(@class);
-        await unitOfWork.SaveChangesAsync();
+        await _classes.AddAsync(@class, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return mappingHelper.MapTo<CreatedEntityResponse>(@class);
     }
@@ -48,7 +48,7 @@ public class ClassService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMap
         return mappingHelper.MapTo<ClassResponse>(@class);
     }
 
-    public async Task<List<ClassResponseBase>> GetClasssAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResponse<ClassResponseBase>> GetClasssAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
     {
         var filter = PredicateBuilder.New<Class>(true);
 

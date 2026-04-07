@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environment';
 import { CourseBase } from '../models/course.model';
+import { PaginatedResult } from '../models/paginated-result.mode';
 
 @Injectable({ providedIn: 'root' })
 export class CourseService {
@@ -13,6 +14,6 @@ export class CourseService {
       .set('name', name)
       .set('page', page)
       .set('pageSize', pageSize);
-    return this.http.get<CourseBase[]>(this.base, { params });
+    return this.http.get<PaginatedResult<CourseBase>>(this.base, { params });
   }
 }

@@ -13,7 +13,7 @@ public interface ICourseService
 {
     Task<CreatedEntityResponse> CreateAsync(CreateUpdateCourseRequest request, CancellationToken cancellationToken = default);
     Task<CourseResponse> GetByCourseIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<List<CourseResponseBase>> GetCoursesAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
+    Task<PaginatedResponse<CourseResponseBase>> GetCoursesAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default);
     Task<CourseResponse> UpdateCourseAsync(Guid id, CreateUpdateCourseRequest request, CancellationToken cancellationToken = default);
     Task DeleteCourseByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddRemoveStudentsInCourseAsync(Guid courseId, AddRemoveStudentsRequest request, CancellationToken cancellationToken = default);
@@ -49,7 +49,7 @@ public class CourseService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMa
         return mappingHelper.MapTo<CourseResponse>(course);
     }
 
-    public async Task<List<CourseResponseBase>> GetCoursesAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResponse<CourseResponseBase>> GetCoursesAsync(GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
     {
         var filter = PredicateBuilder.New<Course>(true);
 

@@ -1,4 +1,5 @@
 ﻿using LearnWellUniversity_CMS.Application.Abstractions;
+using LearnWellUniversity_CMS.Application.DTOs.Responses;
 using LearnWellUniversity_CMS.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Entity.Core;
@@ -19,26 +20,43 @@ public class Repository<T>(AppDbContext dbContext, IMappingHelper mappingHelper)
 
     public IQueryable<T> GetAllAsQueryable() => _dbSet.AsQueryable();
 
-    public IQueryable<T> GetByFiltersAsQueryable(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null)
+    public IQueryable<T> GetByFiltersAsQueryable(Expression<Func<T, bool>>? filter = null)
     {
         var query = _dbSet.AsQueryable();
         if (filter is not null)
         {
             query = query.Where(filter);
         }
-        if (pageSize is not null && page > 0)
-        {
-            query = query.Skip(pageSize.Value * (page.Value - 1)).Take(pageSize.Value);
-        }
 
         return query;
     }
 
-    public async Task<List<TResponseType>> GetByFiltersAsync<TResponseType>(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null, CancellationToken cancellationToken = default) where TResponseType : class
+    public async Task<List<TResponseType>> GetByFiltersAsync<TResponseType>(Expression<Func<T, bool>>? filter = null, CancellationToken cancellationToken = default) where TResponseType : class
     {
-        var query = GetByFiltersAsQueryable(filter, page, pageSize);
+        var query = GetByFiltersAsQueryable(filter);
 
-        return await mappingHelper.ProjectTo<TResponseType>(query).ToListAsync(cancellationToken); ;
+        return await mappingHelper.ProjectTo<TResponseType>(query).ToListAsync(cancellationToken);
+    }
+
+    public async Task<PaginatedResponse<TResponseType>> GetByFiltersAsync<TResponseType>(Expression<Func<T, bool>>? filter = null, int? page = 0, int? pageSize = null, CancellationToken cancellationToken = default) where TResponseType : class
+    {
+        var query = GetByFiltersAsQueryable(filter);
+        var isPaginationAvailable = pageSize is not null && page > 0;
+        int totalRecords = 0;
+
+        if (isPaginationAvailable)
+        {
+            totalRecords = await query.CountAsync();
+            query = GetPaginatedQuery(query, page!.Value, pageSize!.Value);
+        }
+
+        var records = await mappingHelper.ProjectTo<TResponseType>(query).ToListAsync(cancellationToken);
+
+        return new PaginatedResponse<TResponseType>
+        {
+            TotalRecords = isPaginationAvailable ? totalRecords : records.Count,
+            Records = records
+        };
     }
 
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
@@ -70,5 +88,10 @@ public class Repository<T>(AppDbContext dbContext, IMappingHelper mappingHelper)
     public async Task<bool> DoesExistAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)
     {
         return await _dbSet.AnyAsync(filter, cancellationToken);
+    }
+
+    private IQueryable<T> GetPaginatedQuery(IQueryable<T> query, int page, int pageSize)
+    {
+        return query.Skip(pageSize * (page - 1)).Take(pageSize);
     }
 }

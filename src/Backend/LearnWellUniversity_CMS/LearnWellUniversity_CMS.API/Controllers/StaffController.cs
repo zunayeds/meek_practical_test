@@ -12,7 +12,7 @@ namespace LearnWellUniversity_CMS.API.Controllers;
 public class StaffController(IUserService userService, ILogger<StaffController> logger) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> AddStaffAsync([FromBody] CreateUpdateUserRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddStaffAsync([FromBody] CreateUpdateUserRequest request)
     {
         logger.LogInformation("Adding staff '{FirstName} {LastName}'", request.FirstName, request.LastName);
         var result = await userService.CreateWithRoleAsync(request, Roles.Staff);

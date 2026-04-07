@@ -15,7 +15,7 @@ public interface IStudentService
 {
     Task<CreateStudentResponse> CreateAsync(CreateUpdateStudentRequest request, CancellationToken cancellationToken = default);
     Task<StudentResponse> GetByStudentIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<List<StudentResponseBase>> GetStudentsAsync(GetStudentByFiltersRequest request, CancellationToken cancellationToken = default);
+    Task<PaginatedResponse<StudentResponseBase>> GetStudentsAsync(GetStudentByFiltersRequest request, CancellationToken cancellationToken = default);
     Task<StudentResponse> UpdateStudentAsync(Guid id, CreateUpdateStudentRequest request, CancellationToken cancellationToken = default);
     Task DeleteStudentByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
@@ -90,7 +90,7 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
         return mappingHelper.MapTo<StudentResponse>(student);
     }
 
-    public async Task<List<StudentResponseBase>> GetStudentsAsync(GetStudentByFiltersRequest request, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResponse<StudentResponseBase>> GetStudentsAsync(GetStudentByFiltersRequest request, CancellationToken cancellationToken = default)
     {
         var filter = PredicateBuilder.New<Student>(true);
 

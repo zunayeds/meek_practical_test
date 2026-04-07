@@ -17,7 +17,7 @@ public class StaffControllerTests
     public StaffControllerTests()
         => _staffController = new StaffController(_mockUserService.Object, new Mock<ILogger<StaffController>>().Object);
 
-    private CreateUpdateUserRequest ValidUserCreateUpdateRequest = new()
+    private readonly CreateUpdateUserRequest ValidUserCreateUpdateRequest = new()
     {
         FirstName = "Joe",
         LastName = "Smith",

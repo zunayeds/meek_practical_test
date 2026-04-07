@@ -47,7 +47,11 @@ public class CourseControllerTests
     {
         // Arrange
         _mockCourseService.Setup(s => s.GetCoursesAsync(It.IsAny<GetByFiltersBaseRequest>(), default))
-                    .ReturnsAsync([new CourseResponseBase { Name = "Physics 101" }]);
+                    .ReturnsAsync(new PaginatedResponse<CourseResponseBase>
+                    {
+                        TotalRecords = 1,
+                        Records = [new CourseResponseBase { Name = "Physics 101" }]
+                    });
 
         // Act
         var result = await _courseController.GetAll(new GetByFiltersBaseRequest());

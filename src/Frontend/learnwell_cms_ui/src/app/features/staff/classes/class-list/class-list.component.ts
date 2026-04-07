@@ -48,17 +48,13 @@ export class ClassListComponent {
   loadClasses(page: number): void {
     this.loading.set(true);
     this.classService.getAll(this.nameFilter, page, PAGE_SIZE).subscribe({
-      next: items => {
-        this.classes.set(items);
-        this.totalRecords.set(
-          items.length === PAGE_SIZE
-            ? page * PAGE_SIZE + 1
-            : (page - 1) * PAGE_SIZE + items.length
-        );
+      next: result => {
+        this.classes.set(result.records);
+        this.totalRecords.set(result.totalRecords);
         this.loading.set(false);
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load courses.' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load classes.' });
         this.loading.set(false);
       }
     });
