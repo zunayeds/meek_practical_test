@@ -1,10 +1,10 @@
 <app-list-page-layout
   [title]="'Classes'"
   [items]="classes()"
+  [columns]="columns()"
   [loading]="loading()"
   [totalRecords]="totalRecords()"
   [pageSize]="pageSize"
-  [columnCount]="3"
   [emptyMessage]="'No classes found.'"
   (lazyLoad)="onLazyLoad($event)"
   (search)="search()"
@@ -14,11 +14,11 @@
     <input
       pInputText
       [(ngModel)]="nameFilter"
-      placeholder="Search by name..."
+      placeholder="Search by name"
       (keyup.enter)="search()" />
   </div>
 
-  <ng-template list-header>
+  <ng-template listHeader>
     <tr>
       <th>Name</th>
       <th>Description</th>
@@ -30,7 +30,7 @@
     <tr>
       <td>{{ course.name }}</td>
       <td>{{ course.description }}</td>
-      <td>...</td>
+      <td></td>
     </tr>
   </ng-template>
 </app-list-page-layout>

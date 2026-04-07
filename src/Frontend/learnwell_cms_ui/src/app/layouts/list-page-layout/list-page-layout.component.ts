@@ -5,13 +5,7 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
-
-@Directive({
-  selector: 'ng-template[listBody]'
-})
-export class ListBodyDirective {
-  constructor(public template: TemplateRef<unknown>) {}
-}
+import { ColumnModel } from '../../core/models/column.model';
 
 @Component({
   selector: 'app-list-page-layout',
@@ -34,11 +28,9 @@ export class ListPageLayoutComponent<T = unknown> {
   totalRecords = input(0);
   pageSize = input(10);
   emptyMessage = input('No records found.');
-  columnCount = input(1);
+  columns = input<ColumnModel[]>([]);
 
   lazyLoad = output<TableLazyLoadEvent>();
   search = output<void>();
   clearFilters = output<void>();
-
-  bodyTemplate = contentChild(ListBodyDirective);
 }

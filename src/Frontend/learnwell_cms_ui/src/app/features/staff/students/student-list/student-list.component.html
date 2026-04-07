@@ -1,0 +1,50 @@
+<app-list-page-layout
+  [title]="'Students'"
+  [items]="students()"
+  [columns]="columns()"
+  [loading]="loading()"
+  [totalRecords]="totalRecords()"
+  [pageSize]="pageSize"
+  [emptyMessage]="'No students found.'"
+  (lazyLoad)="onLazyLoad($event)"
+  (search)="search()"
+  (clearFilters)="clearFilters()">
+
+  <div list-filters class="filter-bar-content">
+    <input
+      pInputText
+      [(ngModel)]="nameFilter"
+      placeholder="Search by name"
+      (keyup.enter)="search()" />
+    <input
+      pInputText
+      [(ngModel)]="emailFilter"
+      placeholder="Search by email"
+      (keyup.enter)="search()" />
+    <input
+      pInputText
+      [(ngModel)]="phoneNumberFilter"
+      placeholder="Search by phone number"
+      (keyup.enter)="search()" />
+  </div>
+
+  <ng-template listHeader>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email Address</th>
+      <th>Phone Number</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template listBody let-student>
+    <tr>
+      <td>{{ student.firstName }}</td>
+      <td>{{ student.lastName }}</td>
+      <td>{{ student.emailAddress }}</td>
+      <td>{{ student.phoneNumber }}</td>
+      <td></td>
+    </tr>
+  </ng-template>
+</app-list-page-layout>

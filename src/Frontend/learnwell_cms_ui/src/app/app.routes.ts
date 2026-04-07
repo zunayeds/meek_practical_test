@@ -5,6 +5,7 @@ import { StaffLayoutComponent } from './layouts/staff-layout/staff-layout.compon
 import { authGuard } from './core/guards/auth.guard';
 import { staffGuard } from './core/guards/staff.guard';
 import { ClassListComponent } from './features/staff/classes/class-list/class-list.component';
+import { StudentListComponent } from './features/staff/students/student-list/student-list.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -25,6 +26,12 @@ export const routes: Routes = [
                 path: 'classes',
                 children: [
                     { path: '', component: ClassListComponent },
+                ]
+            },
+            {
+                path: 'students',
+                children: [
+                    { path: '', component: StudentListComponent },
                 ]
             }
         ]

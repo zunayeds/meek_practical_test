@@ -11,6 +11,7 @@ import { BaseLayoutComponent } from '../base-layout/base-layout.component';
 export class StaffLayoutComponent {
   navItems: MenuItem[] = [
     { label: 'Courses', routerLink: '/staff/courses' },
-    { label: 'Classes', routerLink: '/staff/classes' }
+    { label: 'Classes', routerLink: '/staff/classes' },
+    { label: 'Students', routerLink: '/staff/students' }
   ];
 }

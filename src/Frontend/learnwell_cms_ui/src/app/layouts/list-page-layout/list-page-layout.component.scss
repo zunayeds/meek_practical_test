@@ -5,3 +5,10 @@
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
+
+:host ::ng-deep .filter-bar-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

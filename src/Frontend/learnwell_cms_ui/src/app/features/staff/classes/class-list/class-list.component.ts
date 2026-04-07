@@ -2,18 +2,19 @@ import { Component, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
 import { ClassService } from '../../../../core/services/class.service';
 import { ClassBase } from '../../../../core/models/class.model';
 import { ListPageLayoutComponent } from '../../../../layouts/list-page-layout/list-page-layout.component';
+import { ColumnModel } from '../../../../core/models/column.model';
 
 const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-class-list',
-  imports: [ListPageLayoutComponent, TableModule, ButtonModule, InputTextModule, FormsModule],
+  imports: [ListPageLayoutComponent, ButtonModule, InputTextModule, FormsModule],   
   templateUrl: './class-list.component.html',
   providers: [MessageService]
 })
@@ -25,6 +26,11 @@ export class ClassListComponent {
 
   classes = signal<ClassBase[]>([]);
   loading = signal(false);
+  columns = signal<ColumnModel[]>([
+    { header: 'Name', field: 'name', type: 'string' },
+    { header: 'Description', field: 'description', type: 'string' },
+    { header: 'Actions', field: 'actions', type: 'action' }
+  ]);
   totalRecords = signal(0);
   nameFilter = '';
 
@@ -59,7 +65,6 @@ export class ClassListComponent {
   }
 
   search(): void {
-    this.dataTable.first = 0;
     this.loadClasses(1);
   }
 
