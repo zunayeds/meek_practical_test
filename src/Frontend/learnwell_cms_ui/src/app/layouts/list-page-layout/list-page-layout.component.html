@@ -2,6 +2,9 @@
 
 <div class="page-header">
   <h2 class="page-title">{{ title() }}</h2>
+  @if (canCreate()) {
+    <p-button [label]="'Add ' + entity()" icon="pi pi-plus" (onClick)="onCreate()" />
+  }
 </div>
 
 <div class="filter-bar">
@@ -32,12 +35,27 @@
   <ng-template pTemplate="body" let-item>
     <tr>
       @for (column of columns(); track column.field) {
-        @if (column.type === 'string') {
-          <td>{{ item[column.field] }}</td>
-        } @else if (column.type === 'date') {
+        @if (column.type === 'date') {
           <td>{{ item[column.field] | date: 'yyyy-MM-dd' }}</td>
+        } @else if (column.type === 'dateTime') {
+          <td>{{ item[column.field] | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
         } @else if (column.type === 'action') {
-          <td></td>
+          <td>
+            <div class="action-buttons">
+              @if(column.actions?.includes('view')) {
+                <p-button icon="pi pi-eye" severity="info" size="small" pTooltip="View" (onClick)="onView(item)" />
+              }
+              @if(column.actions?.includes('edit')) {
+                <p-button icon="pi pi-pencil" severity="secondary" size="small" pTooltip="Edit" (onClick)="onEdit(item)" />
+              }
+              <ng-content select="[list-extra-actions]"></ng-content>
+              @if(column.actions?.includes('delete')) {
+                <p-button icon="pi pi-trash" severity="danger" size="small" pTooltip="Delete" (onClick)="onDelete(item)" />
+              }
+            </div>
+          </td>
+        } @else {
+          <td>{{ item[column.field] }}</td>
         }
       }
     </tr>
@@ -49,3 +67,11 @@
     </tr>
   </ng-template>
 </p-table>
+
+<app-confirm-delete-dialog
+  [visible]="isDeleteDialogVisible()"
+  (visibleChange)="isDeleteDialogVisible.set($event)"
+  [loading]="deleteLoading()"
+  [message]="'Are you sure you want to delete this ' + (entity() | lowercase) + '?'"
+  (confirmed)="onDeleteConfirmed()"
+  (cancelled)="isDeleteDialogVisible.set(false)" />

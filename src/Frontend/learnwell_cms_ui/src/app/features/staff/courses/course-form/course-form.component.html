@@ -1,0 +1,23 @@
+<app-form-layout
+  [entity]="'Course'"
+  [service]="courseService"
+  [form]="form"
+  [listRoute]="'staff/courses'">
+
+  <ng-container fields [formGroup]="form">
+    <div class="field">
+      <label for="name">Name <span class="required">*</span></label>
+      <input id="name" type="text" pInputText formControlName="name" class="w-full" placeholder="Course name (max 30 chars)" maxlength="30" />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <small class="error-text">Name is required (max 30 characters).</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" pTextarea formControlName="description" class="w-full" rows="4"
+        placeholder="Description (max 100 chars)" maxlength="100"></textarea>
+    </div>
+  </ng-container>
+
+</app-form-layout>

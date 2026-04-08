@@ -1,5 +1,7 @@
 <app-list-page-layout
   [title]="'Courses'"
+  [entity]="'Course'"
+  [idField]="'courseId'"
   [items]="courses()"
   [columns]="columns()"
   [loading]="loading()"
@@ -8,7 +10,10 @@
   [emptyMessage]="'No courses found.'"
   (lazyLoad)="onLazyLoad($event)"
   (search)="search()"
-  (clearFilters)="clearFilters()">
+  (clearFilters)="clearFilters()"
+  [canCreate]="true"
+  [baseRoute]="'staff/courses'"
+  [service]="courseService">
 
   <div list-filters class="filter-bar-content">
     <input

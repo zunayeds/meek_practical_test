@@ -243,8 +243,8 @@ namespace LearnWellUniversity_CMS.Infrastructure.DataAccess.Migrations
                 columns: table => new
                 {
                     StudentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    FirstName = table.Column<string>(type: "citext", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "citext", maxLength: 50, nullable: false),
                     EmailAddress = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Address = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),

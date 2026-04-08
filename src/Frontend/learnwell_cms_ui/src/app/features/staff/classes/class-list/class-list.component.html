@@ -1,5 +1,7 @@
 <app-list-page-layout
   [title]="'Classes'"
+  [entity]="'Class'"
+  [idField]="'classId'"
   [items]="classes()"
   [columns]="columns()"
   [loading]="loading()"
@@ -8,7 +10,10 @@
   [emptyMessage]="'No classes found.'"
   (lazyLoad)="onLazyLoad($event)"
   (search)="search()"
-  (clearFilters)="clearFilters()">
+  (clearFilters)="clearFilters()"
+  [canCreate]="true"
+  [baseRoute]="'staff/classes'"
+  [service]="classService">
 
   <div list-filters class="filter-bar-content">
     <input
@@ -17,20 +22,4 @@
       placeholder="Search by name"
       (keyup.enter)="search()" />
   </div>
-
-  <ng-template listHeader>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Actions</th>
-    </tr>
-  </ng-template>
-
-  <ng-template listBody let-course>
-    <tr>
-      <td>{{ course.name }}</td>
-      <td>{{ course.description }}</td>
-      <td></td>
-    </tr>
-  </ng-template>
 </app-list-page-layout>

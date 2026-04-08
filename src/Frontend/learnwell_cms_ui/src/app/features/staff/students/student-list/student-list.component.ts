@@ -21,15 +21,21 @@ const PAGE_SIZE = 10;
 export class StudentListComponent {
   @ViewChild('dataTable') dataTable!: Table;
 
-  private readonly studentService = inject(StudentService);
+  readonly studentService = inject(StudentService);
   private readonly messageService = inject(MessageService);
 
   students = signal<StudentBase[]>([]);
   columns = signal<ColumnModel[]>([
-    { header: 'Name', field: 'name', type: 'string' },
-    { header: 'Email', field: 'email', type: 'string' },
+    { header: 'First Name', field: 'firstName', type: 'string' },
+    { header: 'Last Name', field: 'lastName', type: 'string' },
+    { header: 'Email', field: 'emailAddress', type: 'string' },
     { header: 'Phone Number', field: 'phoneNumber', type: 'string' },
-    { header: 'Actions', field: 'actions', type: 'action' }
+    {
+      header: 'Actions',
+      field: 'actions',
+      type: 'action',
+      actions: ['view', 'edit', 'delete']
+    }
   ]);
   loading = signal(false);
   totalRecords = signal(0);

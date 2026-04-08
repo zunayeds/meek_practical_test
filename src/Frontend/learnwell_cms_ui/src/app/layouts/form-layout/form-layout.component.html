@@ -1,0 +1,22 @@
+<p-toast />
+
+<div class="page-header">
+  <h2 class="page-title">{{ isEdit() ? `Edit ${entity()}` : `Create ${entity()}` }}</h2>
+</div>
+
+<p-card>
+  @if (loading()) {
+    <div class="flex justify-center py-8">
+      <i class="pi pi-spin pi-spinner" style="font-size:2rem"></i>
+    </div>
+  } @else {
+    <form [formGroup]="form()" (ngSubmit)="onSave()">
+      <ng-content select="[fields]"></ng-content>
+
+      <div class="form-actions">
+        <p-button label="Cancel" icon="pi pi-times" severity="secondary" type="button" (onClick)="onCancel()" />
+        <p-button label="Save" icon="pi pi-check" type="submit" [loading]="saving()" [disabled]="form().invalid" />
+      </div>
+    </form>
+  }
+</p-card>

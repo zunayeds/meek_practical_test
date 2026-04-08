@@ -1,5 +1,6 @@
 ﻿using LearnWellUniversity_CMS.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearnWellUniversity_CMS.Domain.Models;
 
@@ -9,9 +10,11 @@ public class Student : AuditTrailBase
     public Guid StudentId { get; set; }
 
     [StringLength(50)]
+    [Column(TypeName = "citext")]
     public required string FirstName { get; set; }
 
     [StringLength(50)]
+    [Column(TypeName = "citext")]
     public required string LastName { get; set; }
 
     [EmailAddress]

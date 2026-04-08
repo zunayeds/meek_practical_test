@@ -3,17 +3,17 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environment';
 import { CourseBase } from '../models/course.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
+import { BaseService } from './base.service';
 
 @Injectable({ providedIn: 'root' })
-export class CourseService {
-  private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}/course`;
+export class CourseService extends BaseService<CourseBase> {
+  override readonly baseUrl = `${environment.apiUrl}/course`;
 
   getAll(name: string, page: number, pageSize: number) {
     const params = new HttpParams()
       .set('name', name)
       .set('page', page)
       .set('pageSize', pageSize);
-    return this.http.get<PaginatedResult<CourseBase>>(this.base, { params });
+    return this.http.get<PaginatedResult<CourseBase>>(this.baseUrl, { params });
   }
 }

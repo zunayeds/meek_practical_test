@@ -1,5 +1,7 @@
 <app-list-page-layout
   [title]="'Students'"
+  [entity]="'Student'"
+  [idField]="'studentId'"
   [items]="students()"
   [columns]="columns()"
   [loading]="loading()"
@@ -8,7 +10,10 @@
   [emptyMessage]="'No students found.'"
   (lazyLoad)="onLazyLoad($event)"
   (search)="search()"
-  (clearFilters)="clearFilters()">
+  (clearFilters)="clearFilters()"
+  [canCreate]="true"
+  [baseRoute]="'staff/students'"
+  [service]="studentService">
 
   <div list-filters class="filter-bar-content">
     <input
@@ -27,24 +32,4 @@
       placeholder="Search by phone number"
       (keyup.enter)="search()" />
   </div>
-
-  <ng-template listHeader>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email Address</th>
-      <th>Phone Number</th>
-      <th>Actions</th>
-    </tr>
-  </ng-template>
-
-  <ng-template listBody let-student>
-    <tr>
-      <td>{{ student.firstName }}</td>
-      <td>{{ student.lastName }}</td>
-      <td>{{ student.emailAddress }}</td>
-      <td>{{ student.phoneNumber }}</td>
-      <td></td>
-    </tr>
-  </ng-template>
 </app-list-page-layout>

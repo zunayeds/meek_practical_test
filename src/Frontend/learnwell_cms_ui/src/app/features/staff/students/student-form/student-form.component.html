@@ -1,0 +1,36 @@
+<app-form-layout
+  [entity]="'Student'"
+  [service]="studentService"
+  [form]="form"
+  [listRoute]="'staff/students'">
+
+  <ng-container fields [formGroup]="form">
+    <div class="form-row">
+        <div class="field">
+          <label>First Name <span class="required">*</span></label>
+          <input type="text" pInputText formControlName="firstName" class="w-full" maxlength="50" />
+        </div>
+        <div class="field">
+          <label>Last Name <span class="required">*</span></label>
+          <input type="text" pInputText formControlName="lastName" class="w-full" maxlength="50" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Email <span class="required">*</span></label>
+          <input type="email" pInputText formControlName="emailAddress" class="w-full" maxlength="50" />
+        </div>
+        <div class="field">
+          <label>Phone <span class="required">*</span></label>
+          <input type="text" pInputText formControlName="phoneNumber" class="w-full" maxlength="20" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Address <span class="required">*</span></label>
+        <textarea pTextarea formControlName="address" class="w-full" rows="3" maxlength="200"></textarea>
+      </div>
+  </ng-container>
+
+</app-form-layout>

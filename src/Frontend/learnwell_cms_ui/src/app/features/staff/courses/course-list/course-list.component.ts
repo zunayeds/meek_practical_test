@@ -21,14 +21,19 @@ const PAGE_SIZE = 10;
 export class CourseListComponent {
   @ViewChild('dataTable') dataTable!: Table;
 
-  private readonly courseService = inject(CourseService);
+  readonly courseService = inject(CourseService);
   private readonly messageService = inject(MessageService);
 
   courses = signal<CourseBase[]>([]);
   columns = signal<ColumnModel[]>([
     { header: 'Name', field: 'name', type: 'string' },
     { header: 'Description', field: 'description', type: 'string' },
-    { header: 'Actions', field: 'actions', type: 'action' }
+    {
+      header: 'Actions',
+      field: 'actions',
+      type: 'action',
+      actions: ['view', 'edit', 'delete']
+    }
   ]);
   loading = signal(false);
   totalRecords = signal(0);

@@ -21,7 +21,7 @@ const PAGE_SIZE = 10;
 export class ClassListComponent {
   @ViewChild('dataTable') dataTable!: Table;
 
-  private readonly classService = inject(ClassService);
+  readonly classService = inject(ClassService);
   private readonly messageService = inject(MessageService);
 
   classes = signal<ClassBase[]>([]);
@@ -29,7 +29,12 @@ export class ClassListComponent {
   columns = signal<ColumnModel[]>([
     { header: 'Name', field: 'name', type: 'string' },
     { header: 'Description', field: 'description', type: 'string' },
-    { header: 'Actions', field: 'actions', type: 'action' }
+    {
+      header: 'Actions',
+      field: 'actions',
+      type: 'action',
+      actions: ['view', 'edit', 'delete']
+    }
   ]);
   totalRecords = signal(0);
   nameFilter = '';
