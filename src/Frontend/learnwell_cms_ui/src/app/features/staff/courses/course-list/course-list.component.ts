@@ -15,8 +15,7 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-course-list',
   imports: [ListPageLayoutComponent, ButtonModule, InputTextModule, FormsModule],
-  templateUrl: './course-list.component.html',
-  providers: [MessageService]
+  templateUrl: './course-list.component.html'
 })
 export class CourseListComponent {
   @ViewChild('dataTable') dataTable!: Table;

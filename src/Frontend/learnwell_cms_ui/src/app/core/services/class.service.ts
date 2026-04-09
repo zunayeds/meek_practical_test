@@ -1,12 +1,12 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environment';
-import { ClassBase } from '../models/class.model';
+import { Class, ClassBase } from '../models/class.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
 import { BaseService } from './base.service';
 
 @Injectable({ providedIn: 'root' })
-export class ClassService extends BaseService<ClassBase> {
+export class ClassService extends BaseService<Class> {
   override readonly baseUrl = `${environment.apiUrl}/class`;
 
   getAll(name: string, page: number, pageSize: number) {

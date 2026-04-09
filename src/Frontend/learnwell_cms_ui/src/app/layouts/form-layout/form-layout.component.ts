@@ -1,20 +1,18 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { BaseService } from '../../core/services/base.service';
 
 @Component({
   selector: 'app-form-layout',
-  imports: [ReactiveFormsModule, CardModule, InputTextModule, TextareaModule, ButtonModule, ToastModule],
+  imports: [ReactiveFormsModule, CardModule, InputTextModule, TextareaModule, ButtonModule],
   templateUrl: './form-layout.component.html',
-  styleUrl: './form-layout.component.scss',
-  providers: [MessageService]
+  styleUrl: './form-layout.component.scss'
 })
 export class FormLayoutComponent implements OnInit {
   private readonly router = inject(Router);
@@ -25,6 +23,7 @@ export class FormLayoutComponent implements OnInit {
   form = input.required<FormGroup>();
   service = input.required<BaseService<any>>();
   listRoute = input.required<string>();
+  successfullySaved = output<{ item: any, response: any }>();
 
   isEdit = signal(false);
   id = signal('');
@@ -65,8 +64,9 @@ export class FormLayoutComponent implements OnInit {
       : this.service()?.create(payload);
 
     request.subscribe({
-      next: () => {
+      next: (response: any) => {
         this.messageService.add({ severity: 'success', summary: 'Saved', detail: `${this.entity()} ${this.isEdit() ? 'updated' : 'created'}.` });
+        this.successfullySaved.emit({ item: payload, response: response });
         setTimeout(() => this.goToList(), 800);
       },
       error: () => {

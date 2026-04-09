@@ -9,6 +9,9 @@ import { StudentListComponent } from './features/staff/students/student-list/stu
 import { CourseFormComponent } from './features/staff/courses/course-form/course-form.component';
 import { ClassFormComponent } from './features/staff/classes/class-form/class-form.component';
 import { StudentFormComponent } from './features/staff/students/student-form/student-form.component';
+import { CourseViewComponent } from './features/staff/courses/course-view/course-view.component';
+import { ClassViewComponent } from './features/staff/classes/class-view/class-view.component';
+import { StudentViewComponent } from './features/staff/students/student-view/student-view.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -24,7 +27,8 @@ export const routes: Routes = [
                 children: [
                     { path: '', component: CourseListComponent },
                     { path: 'create', component: CourseFormComponent },
-                    { path: ':id/edit', component: CourseFormComponent }
+                    { path: ':id/edit', component: CourseFormComponent },
+                    { path: ':id/view', component: CourseViewComponent }
                 ]
             },
             {
@@ -32,7 +36,8 @@ export const routes: Routes = [
                 children: [
                     { path: '', component: ClassListComponent },
                     { path: 'create', component: ClassFormComponent },
-                    { path: ':id/edit', component: ClassFormComponent }
+                    { path: ':id/edit', component: ClassFormComponent },
+                    { path: ':id/view', component: ClassViewComponent }
                 ]
             },
             {
@@ -40,7 +45,8 @@ export const routes: Routes = [
                 children: [
                     { path: '', component: StudentListComponent },
                     { path: 'create', component: StudentFormComponent },
-                    { path: ':id/edit', component: StudentFormComponent }
+                    { path: ':id/edit', component: StudentFormComponent },
+                    { path: ':id/view', component: StudentViewComponent }
                 ]
             }
         ]

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
 import { ColumnModel } from '../../core/models/column.model';
 import { MessageService } from 'primeng/api';
 import { ConfirmDeleteDialogComponent } from '../../shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -20,7 +19,6 @@ import { BaseService } from '../../core/services/base.service';
     TableModule,
     ButtonModule,
     InputTextModule,
-    ToastModule,
     ConfirmDeleteDialogComponent
   ],
   templateUrl: './list-page-layout.component.html',
@@ -75,7 +73,7 @@ export class ListPageLayoutComponent<T = unknown> {
     this.deleteLoading.set(true);
     this.service()?.delete(this.selectedId()).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `${this.entity()} deleted.` });
+        this.messageService.add({ severity: 'warn', summary: 'Deleted', detail: `${this.entity()} deleted.` });
         this.isDeleteDialogVisible.set(false);
         this.deleteLoading.set(false);
         this.search.emit();

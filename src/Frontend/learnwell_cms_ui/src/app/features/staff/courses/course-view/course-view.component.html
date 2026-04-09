@@ -1,0 +1,31 @@
+<app-view-layout
+  [entity]="'Course'"
+  [service]="courseService"
+  [identifier]="'name'"
+  [listRoute]="'staff/courses'"
+  (dataLoaded)="onDataLoaded($event)">
+
+  <ng-container details>
+    <p-tabs value="basic">
+      <p-tablist>
+        <p-tab value="basic">Basic</p-tab>
+        <p-tab value="classes">Classes</p-tab>
+        <p-tab value="students">Students</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="basic">
+          <p-card>
+            <div class="detail-grid">
+              <div class="detail-item"><span class="label">Name</span><span>{{ course()!.name }}</span></div>
+              <div class="detail-item"><span class="label">Description</span><span>{{ course()!.description || '—' }}</span></div>
+              <div class="detail-item"><span class="label">Created At</span><span>{{ course()!.createdAt | date:'medium' }}</span></div>
+              <div class="detail-item"><span class="label">Modified At</span><span>{{ course()!.modifiedAt ? (course()!.modifiedAt | date:'medium') : '—' }}</span></div>
+            </div>
+          </p-card>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </ng-container>
+
+</app-view-layout>

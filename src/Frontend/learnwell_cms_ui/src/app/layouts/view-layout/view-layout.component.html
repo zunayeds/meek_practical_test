@@ -1,0 +1,15 @@
+<div class="page-header">
+  <div class="flex align-items-center gap-2">
+    <p-button icon="pi pi-arrow-left" severity="secondary" size="small" (onClick)="onBack()" />
+    <h2 class="page-title">{{ entity() }}: {{ item()?.[identifier()] }}</h2>
+  </div>
+  <p-button label="Edit" icon="pi pi-pencil" severity="secondary" (onClick)="onEdit()" />
+</div>
+
+@if (loading()) {
+  <div class="flex justify-center py-8">
+    <i class="pi pi-spin pi-spinner" style="font-size:2rem"></i>
+  </div>
+} @else if (item()) {
+  <ng-content select="[details]" />
+}

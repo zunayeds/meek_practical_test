@@ -20,6 +20,6 @@ export class BaseService<T> {
   }
 
   delete(id: string) {
-    return this.http.delete<T>(`${this.baseUrl}/${id}`);
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 }

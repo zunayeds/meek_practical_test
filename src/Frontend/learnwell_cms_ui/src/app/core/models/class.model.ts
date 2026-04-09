@@ -3,3 +3,15 @@ export interface ClassBase {
   name: string;
   description: string | null;
 }
+
+export interface Class extends ClassBase {
+  createdAt: string;
+  createdBy: string;
+  modifiedAt: string | null;
+  modifiedBy: string;
+}
+
+export interface CreateUpdateClassRequest {
+  name: string;
+  description?: string;
+}

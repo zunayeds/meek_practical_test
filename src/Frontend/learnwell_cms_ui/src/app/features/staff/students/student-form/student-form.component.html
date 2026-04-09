@@ -2,7 +2,9 @@
   [entity]="'Student'"
   [service]="studentService"
   [form]="form"
-  [listRoute]="'staff/students'">
+  [listRoute]="'staff/students'"
+  (successfullySaved)="onSuccessfullySaved($event)"
+  >
 
   <ng-container fields [formGroup]="form">
     <div class="form-row">
