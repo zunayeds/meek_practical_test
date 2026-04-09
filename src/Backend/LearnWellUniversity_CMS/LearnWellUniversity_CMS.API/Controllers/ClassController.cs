@@ -22,7 +22,7 @@ public class ClassController(IClassService classService, ILogger<ClassController
     }
 
     [HttpGet]
-    [Authorize(Policy = Policies.StaffOrStudent)]
+    [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> GetAll([FromQuery] GetByFiltersBaseRequest request, CancellationToken cancellationToken = default)
     {
         var courses = await classService.GetClasssAsync(request, cancellationToken);
