@@ -4,7 +4,7 @@ import { environment } from '../../../environment';
 import { Class, ClassBase } from '../models/class.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
 import { BaseService } from './base.service';
-import { CourseBase } from '../models/course.model';
+import { AddRemoveStudentsRequest, CourseBase } from '../models/course.model';
 import { StudentBase } from '../models/student.model';
 
 @Injectable({ providedIn: 'root' })
@@ -25,5 +25,9 @@ export class ClassService extends BaseService<Class> {
 
   getCourses(classId: string) {
     return this.http.get<CourseBase[]>(`${this.baseUrl}/getCourses/${classId}`);
+  }
+
+  addRemoveStudents(classId: string, request: AddRemoveStudentsRequest) {
+    return this.http.post(`${this.baseUrl}/addRemoveStudents/${classId}`, request);
   }
 }

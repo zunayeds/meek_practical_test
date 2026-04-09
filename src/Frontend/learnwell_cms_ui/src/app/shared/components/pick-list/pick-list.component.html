@@ -1,0 +1,83 @@
+<div class="picklist-wrapper">
+  <div class="picklist-panel">
+    <div class="panel-header">Available</div>
+    <div class="panel-body">
+      @if (loading()) {
+        <div class="panel-loading">
+          <p-progressSpinner styleClass="w-6 h-6" />
+        </div>
+      } @else if (filteredSource.length === 0) {
+        <div class="panel-empty">No items available</div>
+      } @else {
+        @for (item of filteredSource; track item.id) {
+          <div
+            class="picklist-item"
+            [class.selected]="isSelectedSource(item)"
+            (click)="toggleSourceSelection(item)">
+            {{ item.label }}
+          </div>
+        }
+      }
+    </div>
+    <div class="panel-footer">
+      <p-button
+        icon="pi pi-chevron-left"
+        severity="secondary"
+        size="small"
+        [disabled]="sourcePage() <= 1 || loading"
+        (onClick)="prevPage()" />
+      <span class="page-label">Page {{ sourcePage() }}</span>
+      <p-button
+        icon="pi pi-chevron-right"
+        severity="secondary"
+        size="small"
+        [disabled]="!sourceHasMore() || loading()"
+        (onClick)="nextPage()" />
+    </div>
+  </div>
+
+  <div class="picklist-controls">
+    <p-button
+      icon="pi pi-angle-right"
+      severity="secondary"
+      [disabled]="selectedSource.length === 0"
+      (onClick)="addSelected()"
+      pTooltip="Add selected" />
+    <p-button
+      icon="pi pi-angle-double-right"
+      severity="secondary"
+      [disabled]="filteredSource.length === 0"
+      (onClick)="addAll()"
+      pTooltip="Add all" />
+    <p-button
+      icon="pi pi-angle-left"
+      severity="secondary"
+      [disabled]="selectedTarget.length === 0"
+      (onClick)="removeSelected()"
+      pTooltip="Remove selected" />
+    <p-button
+      icon="pi pi-angle-double-left"
+      severity="secondary"
+      [disabled]="targetItems().length === 0"
+      (onClick)="removeAll()"
+      pTooltip="Remove all" />
+  </div>
+
+  <div class="picklist-panel">
+    <div class="panel-header">Selected</div>
+    <div class="panel-body">
+      @if (targetItems().length === 0) {
+        <div class="panel-empty">No items selected</div>
+      } @else {
+        @for (item of targetItems(); track item.id) {
+          <div
+            class="picklist-item"
+            [class.selected]="isSelectedTarget(item)"
+            (click)="toggleTargetSelection(item)">
+            {{ item.label }}
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

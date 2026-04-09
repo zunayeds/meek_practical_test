@@ -23,4 +23,9 @@
       (keyup.enter)="search()" />
   </div>
 
+  <ng-template listExtraActions let-course>
+    <p-button icon="pi pi-list" severity="secondary" size="small" pTooltip="Add/Remove Classes" (onClick)="onAssignClasses(course)" />
+    <p-button icon="pi pi-users" severity="secondary" size="small" pTooltip="Add/Remove Students" (onClick)="onAssignStudents(course)" />
+  </ng-template>
+
 </app-list-page-layout>

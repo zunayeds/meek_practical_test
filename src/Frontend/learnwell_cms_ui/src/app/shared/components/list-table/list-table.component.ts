@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { Component, input, output, TemplateRef } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ColumnModel } from "../../../core/models/column.model";
@@ -9,7 +9,8 @@ import { CommonModule } from "@angular/common";
   selector: 'app-list-table',
   standalone: true,
   imports: [CommonModule, TableModule, ButtonModule, DialogModule],
-  templateUrl: './list-table.component.html'
+  templateUrl: './list-table.component.html',
+  styleUrls: ['./list-table.component.scss']
 })
 export class ListTableComponent<T> {
   items = input<T[]>([]);
@@ -20,6 +21,7 @@ export class ListTableComponent<T> {
   columns = input<ColumnModel[]>([]);
   paginationEnabled = input(true);
   isLazyLoad = input(false);
+  extraActionsTemplate = input<TemplateRef<unknown> | null>(null);
 
   lazyLoad = output<TableLazyLoadEvent>();
   onView = output<T>();

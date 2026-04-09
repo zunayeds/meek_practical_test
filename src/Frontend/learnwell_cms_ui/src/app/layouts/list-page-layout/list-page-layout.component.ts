@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, contentChild, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableLazyLoadEvent } from 'primeng/table';
@@ -10,6 +10,7 @@ import { ConfirmDeleteDialogComponent } from '../../shared/components/confirm-de
 import { Router } from '@angular/router';
 import { BaseService } from '../../core/services/base.service';
 import { ListTableComponent } from '../../shared/components/list-table/list-table.component';
+import { ListExtraActionsDirective } from '../../shared/directives/list-extra-actions.directive';
 
 @Component({
   selector: 'app-list-page-layout',
@@ -28,6 +29,8 @@ import { ListTableComponent } from '../../shared/components/list-table/list-tabl
 export class ListPageLayoutComponent<T = unknown> {
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
+
+  extraActionsTemplate = contentChild(ListExtraActionsDirective<T>);
 
   title = input.required<string>();
   entity = input.required<string>();

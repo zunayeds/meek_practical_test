@@ -9,12 +9,14 @@ import { CourseService } from '../../../../core/services/course.service';
 import { CourseBase } from '../../../../core/models/course.model';
 import { ListPageLayoutComponent } from '../../../../layouts/list-page-layout/list-page-layout.component';
 import { ColumnModel } from '../../../../core/models/column.model';
+import { ListExtraActionsDirective } from '../../../../shared/directives/list-extra-actions.directive';
+import { Router } from '@angular/router';
 
 const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-course-list',
-  imports: [ListPageLayoutComponent, ButtonModule, InputTextModule, FormsModule],
+  imports: [ListPageLayoutComponent, ListExtraActionsDirective, ButtonModule, InputTextModule, FormsModule],
   templateUrl: './course-list.component.html'
 })
 export class CourseListComponent {
@@ -22,6 +24,7 @@ export class CourseListComponent {
 
   readonly courseService = inject(CourseService);
   private readonly messageService = inject(MessageService);
+  private readonly router = inject(Router);
 
   courses = signal<CourseBase[]>([]);
   columns = signal<ColumnModel[]>([
@@ -44,12 +47,12 @@ export class CourseListComponent {
   deleteLoading = signal(false);
   selectedId = signal('');
 
-  onLazyLoad(event: TableLazyLoadEvent): void {
+  onLazyLoad(event: TableLazyLoadEvent) {
     const page = Math.floor((event.first ?? 0) / PAGE_SIZE) + 1;
     this.loadCourses(page);
   }
 
-  loadCourses(page: number): void {
+  loadCourses(page: number) {
     this.loading.set(true);
     this.courseService.getAll(this.nameFilter, page, PAGE_SIZE).subscribe({
       next: result => {
@@ -64,11 +67,19 @@ export class CourseListComponent {
     });
   }
 
-  search(): void {
+  search() {
     this.loadCourses(1);
   }
 
-  clearFilters(): void {
+  onAssignClasses(item: CourseBase) {
+    this.router.navigate(['/staff/courses', item.courseId, 'assign-classes']);
+  }
+
+  onAssignStudents(item: CourseBase) {
+    this.router.navigate(['/staff/courses', item.courseId, 'assign-students']);
+  }
+
+  clearFilters() {
     this.nameFilter = '';
     this.search();
   }

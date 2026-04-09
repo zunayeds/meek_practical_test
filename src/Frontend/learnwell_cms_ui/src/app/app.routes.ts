@@ -12,6 +12,8 @@ import { StudentFormComponent } from './features/staff/students/student-form/stu
 import { CourseViewComponent } from './features/staff/courses/course-view/course-view.component';
 import { ClassViewComponent } from './features/staff/classes/class-view/class-view.component';
 import { StudentViewComponent } from './features/staff/students/student-view/student-view.component';
+import { AssignClassComponent } from './features/staff/courses/assign-classes/assign-class.component';
+import { AssignStudentsComponent } from './features/staff/courses/assign-students/assign-students.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -28,7 +30,9 @@ export const routes: Routes = [
                     { path: '', component: CourseListComponent },
                     { path: 'create', component: CourseFormComponent },
                     { path: ':id/edit', component: CourseFormComponent },
-                    { path: ':id/view', component: CourseViewComponent }
+                    { path: ':id/view', component: CourseViewComponent },
+                    { path: ':id/assign-classes', component: AssignClassComponent },
+                    { path: ':id/assign-students', component: AssignStudentsComponent },
                 ]
             },
             {

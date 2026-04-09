@@ -15,13 +15,16 @@
   [items]="items()"
   [loading]="loading()"
   [columns]="columns()"
+  [pageSize]="pageSize()"
+  [totalRecords]="totalRecords()"
+  [extraActionsTemplate]="extraActionsTemplate()?.template ?? null"
   [paginationEnabled]="true"
   [isLazyLoad]="true"
   (lazyLoad)="lazyLoad.emit($event)"
   (onView)="onView($event)"
   (onEdit)="onEdit($event)"
-  (onDelete)="onDelete($event)"
-></app-list-table>
+  (onDelete)="onDelete($event)">
+</app-list-table>
 
 <app-confirm-delete-dialog
   [visible]="isDeleteDialogVisible()"

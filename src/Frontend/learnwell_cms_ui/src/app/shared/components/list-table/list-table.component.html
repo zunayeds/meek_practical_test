@@ -31,9 +31,14 @@
                 <p-button icon="pi pi-eye" severity="info" size="small" pTooltip="View" (onClick)="onView.emit(item)" />
               }
               @if(column.actions?.includes('edit')) {
-                <p-button icon="pi pi-pencil" severity="secondary" size="small" pTooltip="Edit" (onClick)="onEdit.emit(item)" />
+                <p-button icon="pi pi-pencil" severity="warn" size="small" pTooltip="Edit" (onClick)="onEdit.emit(item)" />
               }
-              <ng-content select="[list-extra-actions]"></ng-content>
+              @if (extraActionsTemplate()) {
+                <ng-container
+                  [ngTemplateOutlet]="extraActionsTemplate()"
+                  [ngTemplateOutletContext]="{ $implicit: item }">
+                </ng-container>
+              }
               @if(column.actions?.includes('delete')) {
                 <p-button icon="pi pi-trash" severity="danger" size="small" pTooltip="Delete" (onClick)="onDelete.emit(item)" />
               }

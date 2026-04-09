@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environment';
-import { Course, CourseBase } from '../models/course.model';
+import { AddRemoveClassesRequest, AddRemoveStudentsRequest, Course, CourseBase } from '../models/course.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
 import { BaseService } from './base.service';
 import { ClassBase } from '../models/class.model';
@@ -25,5 +25,13 @@ export class CourseService extends BaseService<Course> {
 
   getStudents(courseId: string) {
     return this.http.get<StudentBase[]>(`${this.baseUrl}/getStudents/${courseId}`);
+  }
+
+  addRemoveClasses(courseId: string, request: AddRemoveClassesRequest) {
+    return this.http.post(`${this.baseUrl}/addRemoveClasses/${courseId}`, request);
+  }
+
+  addRemoveStudents(courseId: string, request: AddRemoveStudentsRequest) {
+    return this.http.post(`${this.baseUrl}/addRemoveStudents/${courseId}`, request);
   }
 }

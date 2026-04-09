@@ -15,3 +15,8 @@ export interface CreateUpdateClassRequest {
   name: string;
   description?: string;
 }
+
+export interface AddRemoveStudentsRequest {
+  addStudentIds: string[];
+  removeStudentIds: string[];
+}
