@@ -55,4 +55,18 @@ public class StudentRepository(AppDbContext dbContext, IMappingHelper mappingHel
             .Select(s => s.UserId)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<List<StudentCourseResponse>> GetCoursesAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.StudentCourses
+            .Where(w => w.StudentId == studentId)
+            .Select(s => new StudentCourseResponse
+            {
+                CourseId = s.CourseId,
+                Name = s.Course.Name,
+                AssignedAt = s.AssignedAt,
+                AssignedBy = s.AssignedByUser.FirstName + " " + s.AssignedByUser.LastName
+            })
+            .ToListAsync();
+    }
 }

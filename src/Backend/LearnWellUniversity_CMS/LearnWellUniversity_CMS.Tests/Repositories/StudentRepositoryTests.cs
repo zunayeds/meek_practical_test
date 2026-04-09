@@ -59,6 +59,14 @@ public class StudentRepositoryTests
         return @class;
     }
 
+    private static async Task<Course> SeedCoursesAsync(AppDbContext dbContext, string name = "Programming")
+    {
+        var course = new Course { CourseId = Guid.NewGuid(), Name = name };
+        dbContext.Courses.Add(course);
+        await dbContext.SaveChangesAsync();
+        return course;
+    }
+
     #region GetOtherStudentNamesByClassIdAsync
 
     [Fact]
@@ -162,6 +170,49 @@ public class StudentRepositoryTests
         Assert.Single(result);
         Assert.Equal(@class.ClassId, result[0].ClassId);
         Assert.Equal("Physics 101", result[0].Name);
+        Assert.Equal("Admin Staff", result[0].AssignedBy);
+        Assert.True(result[0].AssignedAt > DateTimeOffset.MinValue);
+    }
+
+    #endregion
+
+    #region GetCoursesAsync
+
+    [Fact]
+    public async Task GetCourses_NoEnrolments_ReturnsEmptyList()
+    {
+        // Arrange
+        var (dbContext, mockUser, staffUserId) = CreateDbContext();
+        await SeedStaffAsync(dbContext, staffUserId);
+        var studentRepository = CreateStudentRepository(dbContext, mockUser.Object);
+
+        // Act
+        var student = await SeedStudentAsync(dbContext);
+
+        // Assert
+        Assert.Empty(await studentRepository.GetCoursesAsync(student.StudentId));
+    }
+
+    [Fact]
+    public async Task GetCourses_ReturnsCorrectDataAndAssignedByFullName()
+    {
+        // Arrange
+        var (dbContext, mockUser, staffUserId) = CreateDbContext();
+        await SeedStaffAsync(dbContext, staffUserId);
+        var student = await SeedStudentAsync(dbContext);
+        var course = await SeedCoursesAsync(dbContext, "Management");
+        var studentRepository = CreateStudentRepository(dbContext, mockUser.Object);
+
+        dbContext.StudentCourses.Add(new StudentCourse { StudentId = student.StudentId, CourseId = course.CourseId });
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        var result = await studentRepository.GetCoursesAsync(student.StudentId);
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal(course.CourseId, result[0].CourseId);
+        Assert.Equal("Management", result[0].Name);
         Assert.Equal("Admin Staff", result[0].AssignedBy);
         Assert.True(result[0].AssignedAt > DateTimeOffset.MinValue);
     }

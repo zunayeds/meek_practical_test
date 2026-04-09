@@ -27,3 +27,17 @@ export interface CreateStudentResponse {
   createdAt: string;
   password: string;
 }
+
+export interface StudentClassResponse {
+  classId: string;
+  name: string;
+  assignedAt: string;
+  assignedBy: string;
+}
+
+export interface StudentCourseResponse {
+  courseId: string;
+  name: string;
+  assignedAt: string;
+  assignedBy: string;
+}

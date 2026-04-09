@@ -6,7 +6,7 @@
   (dataLoaded)="onDataLoaded($event)">
 
   <ng-container details>
-    <p-tabs value="basic">
+    <p-tabs value="basic" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab value="basic">Basic</p-tab>
         <p-tab value="courses">Courses</p-tab>
@@ -15,14 +15,43 @@
 
       <p-tabpanels>
         <p-tabpanel value="basic">
-          <p-card>
-            <div class="detail-grid">
-              <div class="detail-item"><span class="label">Name</span><span>{{ class()!.name }}</span></div>
-              <div class="detail-item"><span class="label">Description</span><span>{{ class()!.description || '—' }}</span></div>
-              <div class="detail-item"><span class="label">Created At</span><span>{{ class()!.createdAt | date:'medium' }}</span></div>
-              <div class="detail-item"><span class="label">Modified At</span><span>{{ class()!.modifiedAt ? (class()!.modifiedAt | date:'medium') : '—' }}</span></div>
+          @if (class()) {
+            <p-card>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="label">Name</span><span>{{ class()!.name }}</span></div>
+                <div class="detail-item"><span class="label">Description</span><span>{{ class()!.description || '—' }}</span></div>
+                <div class="detail-item"><span class="label">Created At</span><span>{{ class()!.createdAt | date:'medium' }}</span></div>
+                <div class="detail-item"><span class="label">Modified At</span><span>{{ class()!.modifiedAt ? (class()!.modifiedAt | date:'medium') : '—' }}</span></div>
+              </div>
+            </p-card>
+          } @else {
+            <div class="flex justify-center py-8">
+              <i class="pi pi-spin pi-spinner" style="font-size:2rem"></i>
             </div>
-          </p-card>
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="courses">
+          <app-list-table
+            [items]="courses()"
+            [loading]="coursesloading()"
+            [columns]="courseColumns"
+            [paginationEnabled]="true"
+            [isLazyLoad]="false"
+            [emptyMessage]="'No courses linked'"
+          >
+        </app-list-table>
+        </p-tabpanel>
+
+        <p-tabpanel value="students">
+          <app-list-table
+            [items]="students()"
+            [loading]="studentsloading()"
+            [columns]="studentColumns"
+            [paginationEnabled]="true"
+            [isLazyLoad]="false"
+            [emptyMessage]="'No students enrolled'"
+          ></app-list-table>
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>

@@ -1,7 +1,7 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ColumnModel } from '../../core/models/column.model';
@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmDeleteDialogComponent } from '../../shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { Router } from '@angular/router';
 import { BaseService } from '../../core/services/base.service';
+import { ListTableComponent } from '../../shared/components/list-table/list-table.component';
 
 @Component({
   selector: 'app-list-page-layout',
@@ -16,7 +17,7 @@ import { BaseService } from '../../core/services/base.service';
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
+    ListTableComponent,
     ButtonModule,
     InputTextModule,
     ConfirmDeleteDialogComponent

@@ -4,6 +4,8 @@ import { environment } from '../../../environment';
 import { Class, ClassBase } from '../models/class.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
 import { BaseService } from './base.service';
+import { CourseBase } from '../models/course.model';
+import { StudentBase } from '../models/student.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClassService extends BaseService<Class> {
@@ -15,5 +17,13 @@ export class ClassService extends BaseService<Class> {
       .set('page', page)
       .set('pageSize', pageSize);
     return this.http.get<PaginatedResult<ClassBase>>(this.baseUrl, { params });
+  }
+
+  getStudents(classId: string) {
+    return this.http.get<StudentBase[]>(`${this.baseUrl}/getStudents/${classId}`);
+  }
+
+  getCourses(classId: string) {
+    return this.http.get<CourseBase[]>(`${this.baseUrl}/getCourses/${classId}`);
   }
 }

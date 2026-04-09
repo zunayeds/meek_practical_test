@@ -460,4 +460,76 @@ public class StudentServiceTests
     }
 
     #endregion
+
+    #region GetCoursesByStudentIdAsync
+
+    [Fact]
+    public async Task GetCoursesByStudentIdAsync_StudentNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        _mockStudentRepository.Setup(r => r.DoesExistAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), default))
+                        .ReturnsAsync(false);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _studentService.GetCoursesByStudentIdAsync(Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task GetCoursesByStudentIdAsync_Found_ReturnsCourses()
+    {
+        // Arrange
+        var studentId = Guid.NewGuid();
+        var classes = new List<StudentCourseResponse>
+        {
+            new() { CourseId = Guid.NewGuid(), Name = "Programming" }
+        };
+
+        _mockStudentRepository.Setup(r => r.DoesExistAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), default))
+                        .ReturnsAsync(true);
+        _mockStudentRepository.Setup(r => r.GetCoursesAsync(studentId, default)).ReturnsAsync(classes);
+
+        // Act
+        var result = await _studentService.GetCoursesByStudentIdAsync(studentId);
+
+        // Assert
+        Assert.Equal(classes, result);
+    }
+
+    #endregion
+
+    #region GetCoursesAsync (current student)
+
+    [Fact]
+    public async Task GetCoursesAsync_NoStudentIdInContext_ThrowsNotFoundException()
+    {
+        // Arrange
+        _mockCurrentUser.Setup(u => u.StudentId).Returns((Guid?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _studentService.GetCoursesAsync());
+    }
+
+    [Fact]
+    public async Task GetCoursesAsync_StudentInContext_ReturnsCourses()
+    {
+        // Arrange
+        var studentId = Guid.NewGuid();
+        var classes = new List<StudentCourseResponse>
+        {
+            new() { CourseId = Guid.NewGuid(), Name = "Management" }
+        };
+
+        _mockCurrentUser.Setup(u => u.StudentId).Returns(studentId);
+        _mockStudentRepository.Setup(r => r.DoesExistAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Student, bool>>>(), default))
+                        .ReturnsAsync(true);
+        _mockStudentRepository.Setup(r => r.GetCoursesAsync(studentId, default)).ReturnsAsync(classes);
+
+        // Act
+        var result = await _studentService.GetCoursesAsync();
+
+        // Assert
+        Assert.Equal(classes, result);
+    }
+
+    #endregion
 }

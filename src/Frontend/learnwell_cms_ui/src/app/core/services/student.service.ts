@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environment';
-import { Student, StudentBase } from '../models/student.model';
+import { Student, StudentBase, StudentClassResponse, StudentCourseResponse } from '../models/student.model';
 import { PaginatedResult } from '../models/paginated-result.mode';
 import { BaseService } from './base.service';
 
@@ -17,5 +17,13 @@ export class StudentService extends BaseService<Student> {
       .set('page', page)
       .set('pageSize', pageSize);
     return this.http.get<PaginatedResult<StudentBase>>(this.baseUrl, { params });
+  }
+
+  getClassesByStudentId(studentId: string) {
+    return this.http.get<StudentClassResponse[]>(`${this.baseUrl}/getClasses/${studentId}`);
+  }
+
+  getCoursesByStudentId(studentId: string) {
+    return this.http.get<StudentCourseResponse[]>(`${this.baseUrl}/getCourses/${studentId}`);
   }
 }

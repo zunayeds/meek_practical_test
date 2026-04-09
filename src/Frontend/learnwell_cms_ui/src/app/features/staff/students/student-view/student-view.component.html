@@ -6,7 +6,7 @@
   (dataLoaded)="onDataLoaded($event)">
 
   <ng-container details>
-    <p-tabs value="basic">
+    <p-tabs value="basic" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab value="basic">Basic</p-tab>
         <p-tab value="courses">Courses</p-tab>
@@ -15,15 +15,45 @@
 
       <p-tabpanels>
         <p-tabpanel value="basic">
-          <p-card>
-            <div class="detail-grid">
-              <div class="detail-item"><span class="label">First Name</span><span>{{ student()!.firstName }}</span></div>
-              <div class="detail-item"><span class="label">Last Name</span><span>{{ student()!.lastName }}</span></div>
-              <div class="detail-item"><span class="label">Email</span><span>{{ student()!.emailAddress }}</span></div>
-              <div class="detail-item"><span class="label">Phone</span><span>{{ student()!.phoneNumber }}</span></div>
-              <div class="detail-item"><span class="label">Created At</span><span>{{ student()!.createdAt | date:'medium' }}</span></div>
+          @if (student()) {
+            <p-card>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="label">First Name</span><span>{{ student()!.firstName }}</span></div>
+                <div class="detail-item"><span class="label">Last Name</span><span>{{ student()!.lastName }}</span></div>
+                <div class="detail-item"><span class="label">Email</span><span>{{ student()!.emailAddress }}</span></div>
+                <div class="detail-item"><span class="label">Phone</span><span>{{ student()!.phoneNumber }}</span></div>
+                <div class="detail-item"><span class="label">Created At</span><span>{{ student()!.createdAt | date:'medium' }}</span></div>
+              </div>
+            </p-card>
+          } @else {
+            <div class="flex justify-center py-8">
+              <i class="pi pi-spin pi-spinner" style="font-size:2rem"></i>
             </div>
-          </p-card>
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="courses">
+          <app-list-table
+            [items]="courses()"
+            [loading]="coursesloading()"
+            [columns]="courseColumns"
+            [paginationEnabled]="true"
+            [isLazyLoad]="false"
+            [emptyMessage]="'No courses assigned'"
+          >
+          </app-list-table>
+        </p-tabpanel>
+
+        <p-tabpanel value="classes">
+          <app-list-table
+            [items]="classes()"
+            [loading]="classesloading()"
+            [columns]="classColumns"
+            [paginationEnabled]="true"
+            [isLazyLoad]="false"
+            [emptyMessage]="'No classes assigned'"
+          >
+          </app-list-table>
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>

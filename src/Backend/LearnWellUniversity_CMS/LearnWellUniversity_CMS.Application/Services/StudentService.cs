@@ -21,6 +21,8 @@ public interface IStudentService
     Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
     Task<List<StudentClassResponse>> GetClassesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
     Task<List<StudentClassResponse>> GetClassesAsync(CancellationToken cancellationToken = default);
+    Task<List<StudentCourseResponse>> GetCoursesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
+    Task<List<StudentCourseResponse>> GetCoursesAsync(CancellationToken cancellationToken = default);
 }
 
 public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper, ILogger<StudentService> logger) : IStudentService
@@ -158,6 +160,19 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
         var studentId = currentUser.StudentId ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
         await ValidateStudentExistanceAsync(studentId);
         return await _students.GetClassesAsync(studentId, cancellationToken);
+    }
+
+    public async Task<List<StudentCourseResponse>> GetCoursesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        await ValidateStudentExistanceAsync(studentId);
+        return await _students.GetCoursesAsync(studentId, cancellationToken);
+    }
+
+    public async Task<List<StudentCourseResponse>> GetCoursesAsync(CancellationToken cancellationToken = default)
+    {
+        var studentId = currentUser.StudentId ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
+        await ValidateStudentExistanceAsync(studentId);
+        return await _students.GetCoursesAsync(studentId, cancellationToken);
     }
 
     private async Task ValidateStudentExistanceAsync(Guid studentId)

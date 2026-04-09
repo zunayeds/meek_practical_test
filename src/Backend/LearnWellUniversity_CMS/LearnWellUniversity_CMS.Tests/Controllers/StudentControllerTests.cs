@@ -187,4 +187,32 @@ public class StudentControllerTests
         // Assert
         Assert.IsType<OkObjectResult>(result);
     }
+
+    [Fact]
+    public async Task GetCoursesByStudentId_ReturnsOk()
+    {
+        // Arrange
+        _mockStudentService.Setup(s => s.GetCoursesByStudentIdAsync(It.IsAny<Guid>(), default))
+                    .ReturnsAsync([new StudentCourseResponse { Name = "Mathematics" }]);
+
+        // Act
+        var result = await _studentController.GetCoursesByStudentId(Guid.NewGuid());
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetCourses_ReturnsOk()
+    {
+        // Arrange
+        _mockStudentService.Setup(s => s.GetCoursesAsync(default))
+                    .ReturnsAsync([new StudentCourseResponse { Name = "Business" }]);
+
+        // Act
+        var result = await _studentController.GetCourses();
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
 }

@@ -10,4 +10,5 @@ public interface IStudentRepository : IRepository<Student>
     Task<List<string>> GetOtherStudentNamesByClassIdAsync(Guid classId, CancellationToken cancellationToken = default);
     Task<List<StudentClassResponse>> GetClassesAsync(Guid studentId, CancellationToken cancellationToken = default);
     Task<Guid> GetUserIdAsync(Guid studentId, CancellationToken cancellationToken = default);
+    Task<List<StudentCourseResponse>> GetCoursesAsync(Guid studentId, CancellationToken cancellationToken = default);
 }
