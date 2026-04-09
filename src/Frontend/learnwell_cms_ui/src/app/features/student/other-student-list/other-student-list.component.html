@@ -1,0 +1,9 @@
+<app-list-table
+  [items]="students()"
+  [loading]="studentsloading()"
+  [columns]="studentColumns"
+  [paginationEnabled]="true"
+  [isLazyLoad]="false"
+  [emptyMessage]="'No other students enrolled'"
+  [extraActionsTemplate]="extraActionsTemplate()?.template ?? null"
+></app-list-table>

@@ -23,6 +23,7 @@ public interface IStudentService
     Task<List<StudentClassResponse>> GetClassesAsync(CancellationToken cancellationToken = default);
     Task<List<StudentCourseResponse>> GetCoursesByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
     Task<List<StudentCourseResponse>> GetCoursesAsync(CancellationToken cancellationToken = default);
+    Task<StudentOwnResponse> GetOwnInfoAsync(CancellationToken cancellationToken = default);
 }
 
 public class StudentService(IUnitOfWork unitOfWork, IUserService userService, ICurrentUser currentUser, IMappingHelper mappingHelper, ILogger<StudentService> logger) : IStudentService
@@ -173,6 +174,13 @@ public class StudentService(IUnitOfWork unitOfWork, IUserService userService, IC
         var studentId = currentUser.StudentId ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
         await ValidateStudentExistanceAsync(studentId);
         return await _students.GetCoursesAsync(studentId, cancellationToken);
+    }
+
+    public async Task<StudentOwnResponse> GetOwnInfoAsync(CancellationToken cancellationToken = default)
+    {
+        var studentId = currentUser.StudentId ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
+        var student = await _students.GetByIdAsync(studentId, cancellationToken) ?? throw new NotFoundException(ErrorMessageGenerator.NotFoundErrorMessage<Student>());
+        return mappingHelper.MapTo<StudentOwnResponse>(student);
     }
 
     private async Task ValidateStudentExistanceAsync(Guid studentId)

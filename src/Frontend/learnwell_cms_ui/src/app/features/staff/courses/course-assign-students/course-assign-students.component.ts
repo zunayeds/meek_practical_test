@@ -8,11 +8,11 @@ import { ActivatedRoute } from '@angular/router';
 import { StudentService } from '../../../../core/services/student.service';
 
 @Component({
-  selector: 'app-assign-students',
+  selector: 'app-course-assign-students',
   imports: [AssignmentLayoutComponent],
-  templateUrl: './assign-students.component.html'
+  templateUrl: './course-assign-students.component.html'
 })
-export class AssignStudentsComponent implements OnInit {
+export class CourseAssignStudentsComponent implements OnInit {
   private readonly courseService = inject(CourseService);
   private readonly studentService = inject(StudentService);
   private readonly route = inject(ActivatedRoute);

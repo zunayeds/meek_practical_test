@@ -26,4 +26,16 @@ export class StudentService extends BaseService<Student> {
   getCoursesByStudentId(studentId: string) {
     return this.http.get<StudentCourseResponse[]>(`${this.baseUrl}/getCourses/${studentId}`);
   }
+
+  getClasses() {
+    return this.http.get<StudentClassResponse[]>(`${this.baseUrl}/getClasses`);
+  }
+
+  getCourses() {
+    return this.http.get<StudentCourseResponse[]>(`${this.baseUrl}/getCourses`);
+  }
+
+  getOtherStudentsInClass(classId: string) {
+    return this.http.get<string[]>(`${this.baseUrl}/getOtherStudents/${classId}`);
+  }
 }

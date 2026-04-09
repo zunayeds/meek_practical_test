@@ -215,4 +215,18 @@ public class StudentControllerTests
         // Assert
         Assert.IsType<OkObjectResult>(result);
     }
+
+    [Fact]
+    public async Task GetOwnInfo_ReturnsOk()
+    {
+        // Arrange
+        _mockStudentService.Setup(s => s.GetOwnInfoAsync(default))
+                    .ReturnsAsync(new StudentOwnResponse { FirstName = "Jane" });
+
+        // Act
+        var result = await _studentController.GetOwnInfo();
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
 }

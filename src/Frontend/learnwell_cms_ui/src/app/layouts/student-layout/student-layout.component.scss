@@ -1,0 +1,12 @@
+@use '../base-layout/base-layout.component.scss' as *;
+
+:host ::ng-deep .student-menubar {
+  @include base-menubar;
+  background: var(--p-blue-600);
+
+  .p-menubar-item-link {
+    &.p-menubar-item-link-active {
+        color: var(--p-blue-600);
+    }
+  }
+}

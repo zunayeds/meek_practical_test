@@ -30,7 +30,7 @@ public class StudentController(IStudentService studentService, ILogger<StudentCo
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Policy = Policies.StaffOrStudent)]
+    [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var student = await studentService.GetByStudentIdAsync(id, cancellationToken);
@@ -38,7 +38,7 @@ public class StudentController(IStudentService studentService, ILogger<StudentCo
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = Policies.StaffOrStudent)]
+    [Authorize(Policy = Policies.StaffOnly)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CreateUpdateStudentRequest request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Updating student with id '{id}'", id);
@@ -95,5 +95,13 @@ public class StudentController(IStudentService studentService, ILogger<StudentCo
     {
         var classes = await studentService.GetCoursesAsync(cancellationToken);
         return Ok(classes);
+    }
+
+    [HttpGet("getOwnInfo")]
+    [Authorize(Policy = Policies.StudentOnly)]
+    public async Task<IActionResult> GetOwnInfo(CancellationToken cancellationToken = default)
+    {
+        var student = await studentService.GetOwnInfoAsync(cancellationToken);
+        return Ok(student);
     }
 }

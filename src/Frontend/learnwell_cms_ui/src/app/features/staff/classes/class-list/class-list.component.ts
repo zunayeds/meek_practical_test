@@ -9,12 +9,14 @@ import { ClassService } from '../../../../core/services/class.service';
 import { ClassBase } from '../../../../core/models/class.model';
 import { ListPageLayoutComponent } from '../../../../layouts/list-page-layout/list-page-layout.component';
 import { ColumnModel } from '../../../../core/models/column.model';
+import { ListExtraActionsDirective } from '../../../../shared/directives/list-extra-actions.directive';
+import { Router } from '@angular/router';
 
 const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-class-list',
-  imports: [ListPageLayoutComponent, ButtonModule, InputTextModule, FormsModule],   
+  imports: [ListPageLayoutComponent, ListExtraActionsDirective, ButtonModule, InputTextModule, FormsModule],   
   templateUrl: './class-list.component.html'
 })
 export class ClassListComponent {
@@ -22,6 +24,7 @@ export class ClassListComponent {
 
   readonly classService = inject(ClassService);
   private readonly messageService = inject(MessageService);
+  private readonly router = inject(Router);
 
   classes = signal<ClassBase[]>([]);
   loading = signal(false);
@@ -43,6 +46,7 @@ export class ClassListComponent {
   deleteDialogVisible = signal(false);
   deleteLoading = signal(false);
   selectedId = signal('');
+  baseUrl = '/staff/classes';
 
   onLazyLoad(event: TableLazyLoadEvent): void {
     const page = Math.floor((event.first ?? 0) / PAGE_SIZE) + 1;
@@ -71,5 +75,9 @@ export class ClassListComponent {
   clearFilters(): void {
     this.nameFilter = '';
     this.search();
+  }
+
+  onAssignStudents(item: ClassBase) {
+    this.router.navigate([this.baseUrl, item.classId, 'assign-students']);
   }
 }

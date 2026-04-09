@@ -24,7 +24,6 @@ export class StudentViewComponent {
   coursesloading = signal(false);
   courseColumns: ColumnModel[] = [
     { field: 'name', header: 'Name', type: 'string' },
-    { field: 'description', header: 'Description', type: 'string' },
     { field: 'assignedBy', header: 'Assigned By', type: 'string' },
     { field: 'assignedAt', header: 'Assigned At', type: 'dateTime' },
   ];
@@ -34,7 +33,6 @@ export class StudentViewComponent {
   classesloading = signal(false);
   classColumns: ColumnModel[] = [
     { field: 'name', header: 'Name', type: 'string' },
-    { field: 'description', header: 'Description', type: 'string' },
     { field: 'assignedBy', header: 'Assigned By', type: 'string' },
     { field: 'assignedAt', header: 'Assigned At', type: 'dateTime' },
   ];

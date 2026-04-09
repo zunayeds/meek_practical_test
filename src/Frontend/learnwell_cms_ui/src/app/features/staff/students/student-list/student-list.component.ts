@@ -74,6 +74,8 @@ export class StudentListComponent {
 
   clearFilters(): void {
     this.nameFilter = '';
+    this.emailFilter = '';
+    this.phoneNumberFilter = '';
     this.search();
   }
 }

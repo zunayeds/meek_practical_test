@@ -532,4 +532,54 @@ public class StudentServiceTests
     }
 
     #endregion
+
+    #region Get Own Info (current student)
+
+    [Fact]
+    public async Task GetOwnInfoAsync_NoStudentIdInContext_ThrowsNotFoundException()
+    {
+        // Arrange
+        _mockCurrentUser.Setup(u => u.StudentId).Returns((Guid?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _studentService.GetOwnInfoAsync());
+    }
+
+    [Fact]
+    public async Task GetOwnInfoAsync_StudentInContext_ReturnsInfo()
+    {
+        // Arrange
+        var studentId = Guid.NewGuid();
+        var response = new Student
+        {
+            StudentId = studentId,
+            FirstName = "Denise",
+            LastName = "Richards",
+            EmailAddress = "denise@yahoo.com",
+            PhoneNumber = "123456789",
+            Address = "address"
+        };
+        var expected = new StudentOwnResponse
+        {
+            StudentId = studentId,
+            FirstName = "Denise",
+            LastName = "Richards",
+            EmailAddress = "denise@yahoo.com",
+            PhoneNumber = "123456789",
+            Address = "address"
+        };
+
+        _mockCurrentUser.Setup(u => u.StudentId).Returns(studentId);
+        _mockStudentRepository.Setup(r => r.GetByIdAsync(studentId, default)).ReturnsAsync(response);
+        _mockMappingHelper.Setup(m => m.MapTo<StudentOwnResponse>(It.IsAny<Student>()))
+                          .Returns(expected);
+
+        // Act
+        var result = await _studentService.GetOwnInfoAsync();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    #endregion
 }

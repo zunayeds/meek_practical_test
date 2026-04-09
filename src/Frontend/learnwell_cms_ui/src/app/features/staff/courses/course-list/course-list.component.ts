@@ -40,6 +40,7 @@ export class CourseListComponent {
   loading = signal(false);
   totalRecords = signal(0);
   nameFilter = '';
+  baseUrl = '/staff/courses';
 
   readonly pageSize = PAGE_SIZE;
 
@@ -72,11 +73,11 @@ export class CourseListComponent {
   }
 
   onAssignClasses(item: CourseBase) {
-    this.router.navigate(['/staff/courses', item.courseId, 'assign-classes']);
+    this.router.navigate([this.baseUrl, item.courseId, 'assign-classes']);
   }
 
   onAssignStudents(item: CourseBase) {
-    this.router.navigate(['/staff/courses', item.courseId, 'assign-students']);
+    this.router.navigate([this.baseUrl, item.courseId, 'assign-students']);
   }
 
   clearFilters() {

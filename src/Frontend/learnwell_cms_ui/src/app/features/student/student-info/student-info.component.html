@@ -1,0 +1,54 @@
+<p-tabs value="info" (valueChange)="onTabChange($event)">
+  <p-tablist>
+    <p-tab value="info">Info</p-tab>
+    <p-tab value="courses">Courses</p-tab>
+    <p-tab value="classes">Classes</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <p-tabpanel value="info">
+      @if (student()) {
+        <p-card>
+          <div class="detail-grid">
+            <div class="detail-item"><span class="label">First Name</span><span>{{ student()!.firstName }}</span></div>
+            <div class="detail-item"><span class="label">Last Name</span><span>{{ student()!.lastName }}</span></div>
+            <div class="detail-item"><span class="label">Email</span><span>{{ student()!.emailAddress }}</span></div>
+            <div class="detail-item"><span class="label">Phone</span><span>{{ student()!.phoneNumber }}</span></div>
+          </div>
+        </p-card>
+      } @else {
+        <div class="flex justify-center py-8">
+          <i class="pi pi-spin pi-spinner" style="font-size:2rem"></i>
+        </div>
+      }
+    </p-tabpanel>
+
+    <p-tabpanel value="courses">
+      <app-list-table
+        [items]="courses()"
+        [loading]="coursesloading()"
+        [columns]="courseColumns"
+        [paginationEnabled]="true"
+        [isLazyLoad]="false"
+        [emptyMessage]="'No courses assigned'"
+      >
+      </app-list-table>
+    </p-tabpanel>
+
+    <p-tabpanel value="classes">
+      <app-list-table
+        [items]="classes()"
+        [loading]="classesloading()"
+        [columns]="classColumns"
+        [paginationEnabled]="true"
+        [isLazyLoad]="false"
+        [emptyMessage]="'No classes assigned'"
+        [extraActionsTemplate]="classActionsTemplate"
+      >
+        <ng-template #classActionsTemplate listExtraActions let-class>
+          <p-button icon="pi pi-users" severity="secondary" size="small" pTooltip="Other students in class" (onClick)="onViewStudents(class)" />
+        </ng-template>
+      </app-list-table>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

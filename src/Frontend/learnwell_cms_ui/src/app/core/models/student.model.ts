@@ -41,3 +41,7 @@ export interface StudentCourseResponse {
   assignedAt: string;
   assignedBy: string;
 }
+
+export interface StudentNameResponse {
+  fullName: string;
+}

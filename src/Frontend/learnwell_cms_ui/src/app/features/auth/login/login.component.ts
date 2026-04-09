@@ -37,8 +37,8 @@ export class LoginComponent {
       next: () => {
         if (this.authService.isStaff()) {
           this.router.navigate(['/staff/courses']);
-        } else {
-          this.router.navigate(['/student/personal-info']);
+        } else if (this.authService.isStudent()) {
+          this.router.navigate(['/student/info']);
         }
       },
       error: () => {

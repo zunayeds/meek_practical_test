@@ -12,8 +12,7 @@ import { BaseService } from '../../core/services/base.service';
 @Component({
   selector: 'app-view-layout',
   imports: [ReactiveFormsModule, CardModule, InputTextModule, TextareaModule, ButtonModule, ToastModule],
-  templateUrl: './view-layout.component.html',
-  styleUrl: './view-layout.component.scss'
+  templateUrl: './view-layout.component.html'
 })
 export class ViewLayoutComponent implements OnInit {
   private readonly router = inject(Router);

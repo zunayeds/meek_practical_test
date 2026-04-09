@@ -22,4 +22,8 @@ export class BaseService<T> {
   delete(id: string) {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
+
+  getOwnInfo() {
+    return this.http.get<T>(`${this.baseUrl}/getOwnInfo`);
+  }
 }
